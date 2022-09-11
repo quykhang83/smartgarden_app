@@ -39,9 +39,9 @@ class CallApi{
   }
 
 
-  getArticles(apiUrl) async {
-
-  }
+  // getArticles(apiUrl) async {
+  //
+  // }
 
 
   getPublicData(apiUrl) async {
