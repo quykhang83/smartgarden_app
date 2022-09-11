@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:smartgarden_app/controllers/api/my_api.dart';
@@ -9,7 +8,6 @@ import 'package:smartgarden_app/models/location.dart';
 import 'package:smartgarden_app/widget/hero_widget.dart';
 
 import '../components/circle_progress.dart';
-import '../controllers/remote_service.dart';
 import '../models/observation.dart';
 import '../models/sensor.dart';
 
@@ -37,7 +35,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   List<Sensor> sensors = demoSensors;
 
   late AnimationController progressController;
-  late List<Animation<double>> sensorAnimations;
+  List<Animation<double>> sensorAnimations = <Animation<double>>[];
 
   List<double> valueObs = [32, 80.6, 70, 90];
 
@@ -48,36 +46,37 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     //--------------------Fetch data measure----------------------//
 
     // double temp = -10.0;
-    _getObsData();
-    print(valueObs[0]);
+    _DashboardInit();
 
     // temp = observations![0].result![0];
     // print(temp);
     // double humidity = 80.6;
 
     // isLoading = true;
-
-    sensorAnimations = <Animation<double>>[];
-    for (int i = 0; i < demoSensors.length; i++) {
-      Sensor sensor = demoSensors[i];
-      double value = valueObs[i];
-      _DashboardInit(value, sensor);
-    }
   }
 
-  _DashboardInit(double value, Sensor sensor) {
-    progressController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 3000)); //5s
+  _DashboardInit() async{
 
-    Animation<double> sensorAnimation =
-        Tween<double>(begin: sensor.initVale, end: value)
-            .animate(progressController)
-          ..addListener(() {
-            setState(() {});
-          });
+    await _getObsData();
 
-    sensorAnimations.add(sensorAnimation);
-    progressController.forward();
+    for (int i = 0; i < demoSensors.length; i++){
+      Sensor sensor = demoSensors[i];
+      double value = valueObs[i];
+
+      progressController = AnimationController(
+          vsync: this, duration: const Duration(milliseconds: 3000)); //5s
+
+      Animation<double> sensorAnimation =
+      Tween<double>(begin: sensor.initVale, end: value)
+          .animate(progressController)
+        ..addListener(() {
+          setState(() {});
+        });
+
+      sensorAnimations.add(sensorAnimation);
+      progressController.forward();
+    }
+
   }
 
   _getObsData() async {
@@ -89,7 +88,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
 
     debugPrint(token);
 
-    var res = await CallApi().postData(data, 'get/observations(2)');
+    var res = await CallApi().postData(data, 'get/observations(8)');
     var body = json.decode(res.body);
     print(body);
     print(res.statusCode);
@@ -108,7 +107,6 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     }
     if (observations!.isNotEmpty) {
       setState(() {
-        _DashboardInit;
         isLoading = true;
       });
     } else {
@@ -119,6 +117,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
 
   @override
   void dispose() {
+    progressController.dispose();
     controller.dispose();
     super.dispose();
   }
