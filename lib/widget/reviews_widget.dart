@@ -88,7 +88,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
 
     debugPrint(token);
 
-    var res = await CallApi().postData(data, 'get/observations(8)');
+    var res = await CallApi().postData(data, 'get/observations(1)');
     var body = json.decode(res.body);
     print(body);
     print(res.statusCode);

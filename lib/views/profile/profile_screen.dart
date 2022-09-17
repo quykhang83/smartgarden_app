@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smartgarden_app/models/user.dart';
 import 'package:smartgarden_app/views/singup_login/login-screen.dart';
 
 import '../../components/custom_app_bar.dart';
 import '../../constants.dart';
+import '../../controllers/api/my_api.dart';
 import 'components/profile_menu.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -40,6 +40,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     //   debugPrint("no info");
     //   await _getUser();
     // }
+  }
+
+  _showMsg(msg) {
+    //
+    final snackBar = SnackBar(
+      backgroundColor: const Color(0xffb41a1a),
+      content: Text(msg),
+      action: SnackBarAction(
+        label: 'Close',
+        textColor: Colors.white,
+        onPressed: () {
+          // Some code to undo the change!
+        },
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -172,11 +188,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               text: "Log Out",
                               icon: "assets/icons/Log out.svg",
                               press: () async {
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
-                                prefs.remove('token');
-                                prefs.remove("user");
-                                Navigator.pushReplacement(context,
-                                    MaterialPageRoute(builder: (BuildContext ctx) => LoginScreen()));
+                                // var res = await CallApi().deleteToken();
+                                // var body = json.decode(res.body);
+                                // print(body);
+                                // if (body['success']) {
+                                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  prefs.remove('token');
+                                  prefs.remove("user");
+                                  Navigator.pushReplacement(context,
+                                      MaterialPageRoute(builder: (BuildContext ctx) => LoginScreen()));
+                                // } else {
+                                //   _showMsg(body['message']);
+                                // }
                               },
                             ),
                           ],
@@ -240,6 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  //--------- It's not work / can't change nick name -----------//
   void _showDialog() async {
     TextEditingController _changeNameTextController = TextEditingController();
     await showDialog(
