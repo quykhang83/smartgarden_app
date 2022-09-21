@@ -64,7 +64,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
       double value = valueObs[i];
 
       progressController = AnimationController(
-          vsync: this, duration: const Duration(milliseconds: 3000)); //5s
+          vsync: this, duration: const Duration(milliseconds: 1000)); //5s
 
       Animation<double> sensorAnimation =
       Tween<double>(begin: sensor.initVale, end: value)
@@ -80,15 +80,15 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   }
 
   _getObsData() async {
-    String token = await CallApi().getToken();
-    var data = {
-      'token': token,
-      'top': "all",
-    };
+    // String token = await CallApi().getToken();
+    // var data = {
+    //   'token': token,
+    //   'top': "all",
+    // };
+    //
+    // debugPrint(token);
 
-    debugPrint(token);
-
-    var res = await CallApi().postData(data, 'get/observations(1)');
+    var res = await CallApi().getData('get/datastreams(1)/observations');
     var body = json.decode(res.body);
     print(body);
     print(res.statusCode);
@@ -150,7 +150,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
             builder: (context, child) => FadeTransition(
               opacity: CurvedAnimation(
                 parent: widget.animation,
-                curve: Interval(0.2, 1, curve: Curves.easeInExpo),
+                curve: const Interval(0.2, 1, curve: Curves.easeInExpo),
               ),
               child: child,
             ),
@@ -165,7 +165,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
           borderRadius: BorderRadius.circular(10),
           color: Colors.amberAccent,
         ),
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         // color: Colors.orange,
         child: GridTile(
           header: Row(

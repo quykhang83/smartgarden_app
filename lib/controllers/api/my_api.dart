@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 class CallApi{
-  final String _url = 'http://18.142.57.153/api/';
+  final String _url = 'http://18.141.202.157/api/';
   // final String _imgUrl='http://54.169.139.189/uploads/';
   // getImage(){
   //   return _imgUrl;
@@ -15,22 +15,31 @@ class CallApi{
     return await http.post(
         Uri.parse(fullUrl),
         body: jsonEncode(data),
-        headers: _setHeaders()
+        headers: _setPostHeaders()
     );
   }
 
   getData(apiUrl) async {
-    var fullUrl = _url + apiUrl + await getToken() ;
+    // var fullUrl = _url + apiUrl + await getToken() ;
+    var fullUrl = _url + apiUrl;
+    print(fullUrl);
     return await http.get(
         Uri.parse(fullUrl),
-        headers: _setHeaders()
+        headers: _setGetHeaders()
     );
   }
 
-  _setHeaders() => {
+  _setPostHeaders() => {
     'Content-type' : 'application/json',
     'Accept' : 'application/json',
     'Charset': 'utf-8',
+  };
+
+  _setGetHeaders() => {
+    'Content-type' : 'application/json',
+    'Accept' : 'application/json',
+    'Charset': 'utf-8',
+    'token': '$getToken()',
   };
 
   getToken() async {
@@ -51,14 +60,13 @@ class CallApi{
     return await http.post(
         Uri.parse(fullUrl),
         body: jsonEncode(data),
-        headers: _setHeaders()
+        headers: _setPostHeaders()
     );
   }
 
   // getArticles(apiUrl) async {
   //
   // }
-
 
   getPublicData(apiUrl) async {
     http.Response response = await http.get(
