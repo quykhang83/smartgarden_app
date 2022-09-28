@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -38,15 +39,15 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   List<Animation<double>> sensorAnimations = <Animation<double>>[];
 
   List<double> valueObs = [32, 80.6, 70, 90];
-
+  late Timer timer;
   @override
   void initState() {
     super.initState();
 
     //--------------------Fetch data measure----------------------//
-
+    timer = Timer.periodic(const Duration(seconds: 5), (Timer t) => _DashboardInit());
     // double temp = -10.0;
-    _DashboardInit();
+
 
     // temp = observations![0].result![0];
     // print(temp);
@@ -56,7 +57,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   }
 
   _DashboardInit() async{
-
+    observations?.clear();
     await _getObsData();
 
     for (int i = 0; i < demoSensors.length; i++){
@@ -98,6 +99,9 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
       setState(() {
         valueObs[0] = observations![0].result![0];
         print(valueObs[0]);
+        print(valueObs[1]);
+        print(valueObs[2]);
+        print(valueObs[3]);
       });
       // valueObs[0] = observations![0].result![0];
       // print(valueObs[0]);
@@ -117,6 +121,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
 
   @override
   void dispose() {
+    timer.cancel();
     progressController.dispose();
     controller.dispose();
     super.dispose();
@@ -124,110 +129,110 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
 
   @override
   Widget build(BuildContext context) => Visibility(
-        visible: isLoading,
-        replacement: const Center(
-          child: CircularProgressIndicator(),
-        ),
-        child: buildGridView(),
-      );
+    visible: isLoading,
+    replacement: const Center(
+      child: CircularProgressIndicator(),
+    ),
+    child: buildGridView(),
+  );
 
   Widget buildGridView() => GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 4 / 5,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-        ),
-        padding: const EdgeInsets.all(4),
-        controller: controller,
-        itemCount: numbers.length,
-        itemBuilder: (context, index) {
-          final sensor = widget.location.sensors[index];
-          final item = numbers[index];
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      childAspectRatio: 4 / 5,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
+    ),
+    padding: const EdgeInsets.all(4),
+    controller: controller,
+    itemCount: numbers.length,
+    itemBuilder: (context, index) {
+      final sensor = widget.location.sensors[index];
+      final item = numbers[index];
 
-          return AnimatedBuilder(
-            animation: widget.animation,
-            builder: (context, child) => FadeTransition(
-              opacity: CurvedAnimation(
-                parent: widget.animation,
-                curve: const Interval(0.2, 1, curve: Curves.easeInExpo),
-              ),
-              child: child,
-            ),
-            child: buildSensor(item, sensor),
-          );
-        },
+      return AnimatedBuilder(
+        animation: widget.animation,
+        builder: (context, child) => FadeTransition(
+          opacity: CurvedAnimation(
+            parent: widget.animation,
+            curve: const Interval(0.2, 1, curve: Curves.easeInExpo),
+          ),
+          child: child,
+        ),
+        child: buildSensor(item, sensor),
       );
+    },
+  );
 
   Widget buildSensor(String number, Sensor sensor) => Container(
-        height: 500,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.amberAccent,
-        ),
-        padding: const EdgeInsets.all(16),
-        // color: Colors.orange,
-        child: GridTile(
-          header: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              HeroWidget(
-                tag: HeroTag.avatar(sensor, locations.indexOf(widget.location)),
-                child: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.black12,
-                  backgroundImage: AssetImage(sensor.urlImg),
-                ),
-              ),
-              Text(
-                sensors[int.parse(number)].name,
-                textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ],
+    height: 500,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      color: Colors.amberAccent,
+    ),
+    padding: const EdgeInsets.all(16),
+    // color: Colors.orange,
+    child: GridTile(
+      header: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          HeroWidget(
+            tag: HeroTag.avatar(sensor, locations.indexOf(widget.location)),
+            child: CircleAvatar(
+              radius: 16,
+              backgroundColor: Colors.black12,
+              backgroundImage: AssetImage(sensor.urlImg),
+            ),
           ),
-          child: Center(
-              child: isLoading
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Text(
+            sensors[int.parse(number)].name,
+            textAlign: TextAlign.center,
+            style:
+            const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+      child: Center(
+          child: isLoading
+              ? Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              const SizedBox(height: 5),
+              CustomPaint(
+                foregroundPainter: CircleProgress(
+                    value: sensorAnimations[int.parse(number)].value,
+                    sensor: sensors[int.parse(number)]),
+                child: SizedBox(
+                  width: 150,
+                  height: 150,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        const SizedBox(height: 5),
-                        CustomPaint(
-                          foregroundPainter: CircleProgress(
-                              value: sensorAnimations[int.parse(number)].value,
-                              sensor: sensors[int.parse(number)]),
-                          child: SizedBox(
-                            width: 150,
-                            height: 150,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    '${sensorAnimations[int.parse(number)].value.toInt()}',
-                                    style: const TextStyle(
-                                        fontSize: 50,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    sensors[int.parse(number)].unit,
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                        Text(
+                          '${sensorAnimations[int.parse(number)].value.toInt()}',
+                          style: const TextStyle(
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          sensors[int.parse(number)].unit,
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
-                    )
-                  : const Text(
-                      'Loading...',
-                      style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                    )),
-        ),
-      );
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+              : const Text(
+            'Loading...',
+            style:
+            TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          )),
+    ),
+  );
 }

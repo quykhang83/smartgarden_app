@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 class CallApi{
-  final String _url = 'http://18.141.202.157/api/';
+  final String _url = 'http://13.213.38.60/api/';
   // final String _imgUrl='http://54.169.139.189/uploads/';
   // getImage(){
   //   return _imgUrl;
@@ -70,7 +70,7 @@ class CallApi{
 
   getPublicData(apiUrl) async {
     http.Response response = await http.get(
-      Uri.parse(_url+apiUrl));
+        Uri.parse(_url+apiUrl));
     try{
       if(response.statusCode == 200){
         return response;
