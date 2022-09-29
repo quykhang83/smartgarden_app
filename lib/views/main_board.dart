@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/models/menu_item.dart';
 import 'package:smartgarden_app/views/gardens_list.dart';
 import 'package:smartgarden_app/views/home.dart';
 import 'package:smartgarden_app/views/menu_page.dart';
 import 'package:smartgarden_app/views/profile/profile_screen.dart';
 import 'package:smartgarden_app/views/test_page.dart';
+
+import '../controllers/api/my_api.dart';
 
 class MainBoard extends StatefulWidget {
   static String id = "/homepage";
@@ -18,6 +23,28 @@ class MainBoard extends StatefulWidget {
 
 class _MainBoardState extends State<MainBoard> {
   MyMenuItem currentItem = MenuItems.home;
+  @override
+  void initState() {
+    // TODO: implement initState
+    _getData();
+    super.initState();
+  }
+
+  _getData() async {
+
+    var res = await CallApi().getData('getThings');
+    var body = json.decode(res.body);
+    print(body);
+    if (body['success']) {
+
+      print('có data');
+
+    } else {
+      print(body['message']);
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) => ZoomDrawer(
@@ -33,13 +60,13 @@ class _MainBoardState extends State<MainBoard> {
     mainScreen: getScreen(),
     menuScreen: Builder(
       builder: (context) => MenuPage(
-          currentItem: currentItem,
-          onSelectedItem: (item) {
-            setState(() => currentItem = item);
+        currentItem: currentItem,
+        onSelectedItem: (item) {
+          setState(() => currentItem = item);
 
-            ZoomDrawer.of(context)!.close();
-          },
-        ),
+          ZoomDrawer.of(context)!.close();
+        },
+      ),
     ),
   );
 

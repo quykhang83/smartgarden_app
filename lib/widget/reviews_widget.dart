@@ -38,14 +38,14 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   late AnimationController progressController;
   List<Animation<double>> sensorAnimations = <Animation<double>>[];
 
-  List<double> valueObs = [32, 80.6, 70, 90];
+  List<double> valueObs = [32, 20, 70, 90];
   late Timer timer;
   @override
   void initState() {
     super.initState();
 
     //--------------------Fetch data measure----------------------//
-    timer = Timer.periodic(const Duration(seconds: 5), (Timer t) => _DashboardInit());
+    timer = Timer.periodic(const Duration(seconds: 10), (Timer t) => _DashboardInit());
     // double temp = -10.0;
 
 
@@ -59,7 +59,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   _DashboardInit() async{
     observations?.clear();
     await _getObsData();
-
+    sensorAnimations.clear();
     for (int i = 0; i < demoSensors.length; i++){
       Sensor sensor = demoSensors[i];
       double value = valueObs[i];
@@ -71,10 +71,13 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
       Tween<double>(begin: sensor.initVale, end: value)
           .animate(progressController)
         ..addListener(() {
-          setState(() {});
+          setState(() {
+            valueObs[0] = observations![0].result![0];
+          });
         });
 
       sensorAnimations.add(sensorAnimation);
+      print(sensorAnimations[0].value);
       progressController.forward();
     }
 
@@ -89,10 +92,11 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     //
     // debugPrint(token);
 
-    var res = await CallApi().getData('get/datastreams(1)/observations');
+    var res = await CallApi().getData('get/datastreams(2)/observations');
     var body = json.decode(res.body);
     print(body);
     print(res.statusCode);
+
     if (res.statusCode == 200) {
       var json = res.body;
       observations = observationFromJson(json);
