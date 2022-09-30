@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/models/menu_item.dart';
+import 'package:smartgarden_app/models/thing.dart';
 import 'package:smartgarden_app/views/gardens_list.dart';
 import 'package:smartgarden_app/views/home.dart';
 import 'package:smartgarden_app/views/menu_page.dart';
@@ -23,6 +24,9 @@ class MainBoard extends StatefulWidget {
 
 class _MainBoardState extends State<MainBoard> {
   MyMenuItem currentItem = MenuItems.home;
+  String token = '';
+  late Map<String, String> header ;
+  List<Thing> data = [];
   @override
   void initState() {
     // TODO: implement initState
@@ -31,13 +35,28 @@ class _MainBoardState extends State<MainBoard> {
   }
 
   _getData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token')!;
+    header =  {
+      'Content-type' : 'application/json',
+      'Accept' : 'application/json',
+      'Charset': 'utf-8',
+      'token': token,
+    };
+    setState(() {
 
-    var res = await CallApi().getData('getThings');
+    });
+    var res = await CallApi().getDataHeader('getThings', header);
     var body = json.decode(res.body);
     print(body);
     if (body['success']) {
 
-      print('có data');
+      var data = body['data'].map((value)=>Thing.fromJson(value)).toList();
+
+      for (Thing e in data ){
+        print(e.id);
+        print(e.name);
+      }
 
     } else {
       print(body['message']);
@@ -62,7 +81,12 @@ class _MainBoardState extends State<MainBoard> {
       builder: (context) => MenuPage(
         currentItem: currentItem,
         onSelectedItem: (item) {
-          setState(() => currentItem = item);
+
+          setState(() {
+            currentItem = item;
+            print('Bấm dô đây là qua');
+          });
+
 
           ZoomDrawer.of(context)!.close();
         },

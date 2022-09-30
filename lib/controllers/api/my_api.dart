@@ -23,9 +23,20 @@ class CallApi{
     // var fullUrl = _url + apiUrl + await getToken() ;
     var fullUrl = _url + apiUrl;
     print(fullUrl);
+
     return await http.get(
         Uri.parse(fullUrl),
-        headers: _setGetHeaders()
+        headers: _setGetHeaders1()
+    );
+  }
+  getDataHeader(apiUrl, header) async {
+    // var fullUrl = _url + apiUrl + await getToken() ;
+    var fullUrl = _url + apiUrl;
+    print(fullUrl);
+
+    return await http.get(
+        Uri.parse(fullUrl),
+        headers: header
     );
   }
 
@@ -41,6 +52,15 @@ class CallApi{
     'Charset': 'utf-8',
     'token': '$getToken()',
   };
+
+
+  _setGetHeaders1() => {
+    'Content-type' : 'application/json',
+    'Accept' : 'application/json',
+    'Charset': 'utf-8',
+    'token': 'yRkl2JogHFzLen0daWZM248I2QL2Z89fNCZqNNNOrJVSFEwmR02cVnhGK4q0',
+  };
+
 
   getToken() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();

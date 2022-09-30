@@ -32,7 +32,10 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   final controller = ScrollController();
   bool isLoading = false;
 
-  List<Observation>? observations = [];
+  List<Observation>? observations1 = [];
+  List<Observation>? observations2 = [];
+  List<Observation>? observations3 = [];
+  List<Observation>? observations4 = [];
   List<Sensor> sensors = demoSensors;
 
   late AnimationController progressController;
@@ -57,27 +60,64 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   }
 
   _DashboardInit() async{
-    observations?.clear();
+    observations1?.clear();
+    observations2?.clear();
+    observations3?.clear();
+    observations4?.clear();
     await _getObsData();
     sensorAnimations.clear();
     for (int i = 0; i < demoSensors.length; i++){
       Sensor sensor = demoSensors[i];
-      double value = valueObs[i];
+      double value1 = valueObs[0];
+      double value2 = valueObs[1];
+      double value3 = valueObs[2];
+      double value4 = valueObs[3];
 
       progressController = AnimationController(
           vsync: this, duration: const Duration(milliseconds: 1000)); //5s
 
-      Animation<double> sensorAnimation =
-      Tween<double>(begin: sensor.initVale, end: value)
+      Animation<double> sensorAnimation1 =
+      Tween<double>(begin: sensor.initVale, end: value1)
           .animate(progressController)
         ..addListener(() {
           setState(() {
-            valueObs[0] = observations![0].result![0];
+
           });
         });
 
-      sensorAnimations.add(sensorAnimation);
-      print(sensorAnimations[0].value);
+      Animation<double> sensorAnimation2 =
+      Tween<double>(begin: sensor.initVale, end: value2)
+          .animate(progressController)
+        ..addListener(() {
+          setState(() {
+
+          });
+        });
+
+      Animation<double> sensorAnimation3 =
+      Tween<double>(begin: sensor.initVale, end: value3)
+          .animate(progressController)
+        ..addListener(() {
+          setState(() {
+
+          });
+        });
+
+      Animation<double> sensorAnimation4 =
+      Tween<double>(begin: sensor.initVale, end: value4)
+          .animate(progressController)
+        ..addListener(() {
+          setState(() {
+
+          });
+        });
+
+
+      sensorAnimations.add(sensorAnimation1);
+      sensorAnimations.add(sensorAnimation2);
+      sensorAnimations.add(sensorAnimation3);
+      sensorAnimations.add(sensorAnimation4);
+
       progressController.forward();
     }
 
@@ -92,28 +132,47 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     //
     // debugPrint(token);
 
-    var res = await CallApi().getData('get/datastreams(2)/observations');
-    var body = json.decode(res.body);
-    print(body);
-    print(res.statusCode);
+    var res1 = await CallApi().getData('get/datastreams(1)/observations');
+    var res2 = await CallApi().getData('get/datastreams(2)/observations');
+    var res3 = await CallApi().getData('get/datastreams(3)/observations');
+    var res4 = await CallApi().getData('get/datastreams(4)/observations');
 
-    if (res.statusCode == 200) {
-      var json = res.body;
-      observations = observationFromJson(json);
+
+
+
+    if (res1.statusCode == 200 &&
+        res2.statusCode == 200 &&
+        res3.statusCode == 200 &&
+        res4.statusCode == 200 ) {
+      var json1 = res1.body;
+      var json2 = res2.body;
+      var json3 = res3.body;
+      var json4 = res4.body;
+      observations1 = observationFromJson(json1);
+      observations2 = observationFromJson(json2);
+      observations3 = observationFromJson(json3);
+      observations4 = observationFromJson(json4);
+
       setState(() {
-        valueObs[0] = observations![0].result![0];
-        print(valueObs[0]);
-        print(valueObs[1]);
-        print(valueObs[2]);
-        print(valueObs[3]);
+        valueObs[0] = observations1![0].result![0];
+        valueObs[1] = observations2![0].result![0];
+        valueObs[2] = observations3![0].result![0];
+        valueObs[3] = observations4![0].result![0];
+
+
+
       });
       // valueObs[0] = observations![0].result![0];
       // print(valueObs[0]);
+      print( valueObs[0]);
+      print( valueObs[1]);
+      print( valueObs[2]);
+      print( valueObs[3]);
     } else {
       // _showMsg(body['message']);
       print("Some things was wrong!!");
     }
-    if (observations!.isNotEmpty) {
+    if (observations1!.isNotEmpty) {
       setState(() {
         isLoading = true;
       });
