@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/controllers/api/my_api.dart';
 import 'package:smartgarden_app/data/hero_tag.dart';
 import 'package:smartgarden_app/data/locations.dart';
@@ -9,16 +10,20 @@ import 'package:smartgarden_app/models/location.dart';
 import 'package:smartgarden_app/widget/hero_widget.dart';
 
 import '../components/circle_progress.dart';
+import '../models/DataStream.dart';
 import '../models/observation.dart';
 import '../models/sensor.dart';
+import '../models/thing.dart';
 
 class ReviewsWidget extends StatefulWidget {
-  final Location location;
+  final Thing thing;
   final Animation<double> animation;
 
+
   const ReviewsWidget({
-    required this.location,
+    required this.thing,
     required this.animation,
+
     Key? key,
   }) : super(key: key);
 
@@ -32,22 +37,37 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   final controller = ScrollController();
   bool isLoading = false;
 
-  List<Observation>? observations1 = [];
-  List<Observation>? observations2 = [];
-  List<Observation>? observations3 = [];
-  List<Observation>? observations4 = [];
+  List<Observation>? obsTemperature = [];
+  List<Observation>? obsHumidity = [];
+  List<Observation>? obsLight = [];
+  List<Observation>? obsCO2 = [];
   List<Sensor> sensors = demoSensors;
 
   late AnimationController progressController;
   List<Animation<double>> sensorAnimations = <Animation<double>>[];
 
   List<double> valueObs = [32, 20, 70, 90];
+  List<int> idDataStream = [];
   late Timer timer;
+  String token = '';
+  late Map<String, String> header ;
+  List<DataStream> dataStream = [];
   @override
   void initState() {
-    super.initState();
+
+    getDataStreamOfThing().then((value) {
+
+      setState((){
+        for(DataStream e in value!){
+          idDataStream.add(e.id!);
+        }
+        dataStream.addAll(value);
+      });
+    });
+
 
     //--------------------Fetch data measure----------------------//
+    _DashboardInit();
     timer = Timer.periodic(const Duration(seconds: 10), (Timer t) => _DashboardInit());
     // double temp = -10.0;
 
@@ -55,18 +75,19 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     // temp = observations![0].result![0];
     // print(temp);
     // double humidity = 80.6;
-
+    super.initState();
     // isLoading = true;
   }
 
-  _DashboardInit() async{
-    observations1?.clear();
-    observations2?.clear();
-    observations3?.clear();
-    observations4?.clear();
-    await _getObsData();
+  _DashboardInit() async {
+    print('123 $idDataStream');
     sensorAnimations.clear();
-    for (int i = 0; i < demoSensors.length; i++){
+    obsTemperature?.clear();
+    obsHumidity?.clear();
+    obsLight?.clear();
+    obsCO2?.clear();
+    await _getObsData(idDataStream);
+    for (int i = 0; i < dataStream.length; i++){
       Sensor sensor = demoSensors[i];
       double value1 = valueObs[0];
       double value2 = valueObs[1];
@@ -123,65 +144,81 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
 
   }
 
-  _getObsData() async {
-    // String token = await CallApi().getToken();
-    // var data = {
-    //   'token': token,
-    //   'top': "all",
-    // };
-    //
-    // debugPrint(token);
+  _getObsData(List<int> index) async {
+    for(int i = 0; i < index.length; i++){
+      var res = await CallApi().getData('get/datastreams(${index[i]})/observations');
+      var body = json.decode(res.body);
+      //Light
+      if (res.statusCode == 200 && index[i] == 1 ) {
+        var json1 = res.body;
+        obsLight = observationFromJson(json1);
+        setState(() {
+          valueObs[index[i] - 1] = obsLight![0].result![0];
+        });
+        // valueObs[0] = observations![0].result![0];
+        // print(valueObs[0]);
 
-    var res1 = await CallApi().getData('get/datastreams(1)/observations');
-    var res2 = await CallApi().getData('get/datastreams(2)/observations');
-    var res3 = await CallApi().getData('get/datastreams(3)/observations');
-    var res4 = await CallApi().getData('get/datastreams(4)/observations');
+      }
+      //CO2
+      else if (res.statusCode == 200 && index[i] == 2 ) {
+        var json1 = res.body;
+        obsCO2= observationFromJson(json1);
+        setState(() {
+          valueObs[index[i] - 1] = obsCO2![0].result![0];
+        });
+        // valueObs[0] = observations![0].result![0];
+        // print(valueObs[0]);
 
+      }
+      //Temperature
+      else if (res.statusCode == 200 && index[i] == 3 ) {
+        var json1 = res.body;
+        obsTemperature = observationFromJson(json1);
+        setState(() {
+          valueObs[index[i] - 1] = obsTemperature![0].result![0];
+        });
+        // valueObs[0] = observations![0].result![0];
+        // print(valueObs[0]);
 
+      }
+      //Hum
+      else if (res.statusCode == 200 && index[i] == 4 ) {
+        var json1 = res.body;
+        obsHumidity = observationFromJson(json1);
+        setState(() {
+          valueObs[index[i] - 1] = obsHumidity![0].result![0];
+        });
+        // valueObs[0] = observations![0].result![0];
+        // print(valueObs[0]);
 
-
-    if (res1.statusCode == 200 &&
-        res2.statusCode == 200 &&
-        res3.statusCode == 200 &&
-        res4.statusCode == 200 ) {
-      var json1 = res1.body;
-      var json2 = res2.body;
-      var json3 = res3.body;
-      var json4 = res4.body;
-      observations1 = observationFromJson(json1);
-      observations2 = observationFromJson(json2);
-      observations3 = observationFromJson(json3);
-      observations4 = observationFromJson(json4);
-
-      setState(() {
-        valueObs[0] = observations1![0].result![0];
-        valueObs[1] = observations2![0].result![0];
-        valueObs[2] = observations3![0].result![0];
-        valueObs[3] = observations4![0].result![0];
-
-
-
-      });
-      // valueObs[0] = observations![0].result![0];
-      // print(valueObs[0]);
-      print( valueObs[0]);
-      print( valueObs[1]);
-      print( valueObs[2]);
-      print( valueObs[3]);
-    } else {
-      // _showMsg(body['message']);
-      print("Some things was wrong!!");
+      }
+      else {
+        // _showMsg(body['message']);
+        print("Some things was wrong!!");
+      }
+      if (body.toString().isNotEmpty) {
+        setState(() {
+          isLoading = true;
+        });
+      } else {
+        isLoading = false;
+      }
     }
-    if (observations1!.isNotEmpty) {
-      setState(() {
-        isLoading = true;
-      });
-    } else {
-      isLoading = false;
-    }
+
     // observations = await RemoteService().getObservations();
   }
 
+  Future<List<DataStream>?> getDataStreamOfThing() async {
+    var res = await CallApi().getData('get/things(${widget.thing.id})/datastreams?top=all');
+    var body = json.decode(res.body);
+    if (body.toString().isNotEmpty) {
+      var thing = body as List<dynamic>;
+      var data = thing.map((e) => DataStream.fromJson(e)).toList();
+      return data;
+    } else {
+      return null;
+    }
+  }
   @override
   void dispose() {
     timer.cancel();
@@ -210,7 +247,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     controller: controller,
     itemCount: numbers.length,
     itemBuilder: (context, index) {
-      final sensor = widget.location.sensors[index];
+      final sensor = demoSensors[index];
       final item = numbers[index];
 
       return AnimatedBuilder(
@@ -239,14 +276,14 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
       header: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          HeroWidget(
-            tag: HeroTag.avatar(sensor, locations.indexOf(widget.location)),
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: Colors.black12,
-              backgroundImage: AssetImage(sensor.urlImg),
-            ),
-          ),
+          // HeroWidget(
+          //   tag: HeroTag.avatar(sensor, locations.indexOf(locations)),
+          //   child: CircleAvatar(
+          //     radius: 16,
+          //     backgroundColor: Colors.black12,
+          //     backgroundImage: AssetImage(sensor.urlImg),
+          //   ),
+          // ),
           Text(
             sensors[int.parse(number)].name,
             textAlign: TextAlign.center,
@@ -263,7 +300,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
               const SizedBox(height: 5),
               CustomPaint(
                 foregroundPainter: CircleProgress(
-                    value: sensorAnimations[int.parse(number)].value,
+                    value: sensorAnimations.isNotEmpty ? sensorAnimations[int.parse(number)].value : 0,
                     sensor: sensors[int.parse(number)]),
                 child: SizedBox(
                   width: 150,
@@ -273,7 +310,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          '${sensorAnimations[int.parse(number)].value.toInt()}',
+                          sensorAnimations.isNotEmpty ? '${sensorAnimations[int.parse(number)].value.toInt()}' : '',
                           style: const TextStyle(
                               fontSize: 50,
                               fontWeight: FontWeight.bold),

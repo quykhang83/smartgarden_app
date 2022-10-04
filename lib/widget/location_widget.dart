@@ -5,19 +5,21 @@ import 'package:smartgarden_app/views/detail_page.dart';
 import 'package:smartgarden_app/widget/expanded_content_widget.dart';
 import 'package:smartgarden_app/widget/image_widget.dart';
 
-class LocationWidget extends StatefulWidget {
-  final Location location;
+import '../models/thing.dart';
 
-  const LocationWidget({
-    required this.location,
+class ThingWidget extends StatefulWidget {
+  final Thing thing;
+
+  const ThingWidget({
+    required this.thing,
     Key? key,
   }) : super(key: key);
 
   @override
-  _LocationWidgetState createState() => _LocationWidgetState();
+  _ThingWidgetState createState() => _ThingWidgetState();
 }
 
-class _LocationWidgetState extends State<LocationWidget> {
+class _ThingWidgetState extends State<ThingWidget> {
   bool isExpanded = false;
 
   @override
@@ -34,7 +36,7 @@ class _LocationWidgetState extends State<LocationWidget> {
             bottom: isExpanded ? 40 : 100,
             width: isExpanded ? size.width * 0.78 : size.width * 0.7,
             height: isExpanded ? size.height * 0.6 : size.height * 0.5,
-            child: ExpandedContentWidget(location: widget.location),
+            child: ExpandedContentWidget(thing: widget.thing),
           ),
           AnimatedPositioned(
             duration: Duration(milliseconds: 250),
@@ -42,7 +44,7 @@ class _LocationWidgetState extends State<LocationWidget> {
             child: GestureDetector(
               onPanUpdate: onPanUpdate,
               onTap: openDetailPage,
-              child: ImageWidget(location: widget.location),
+              child: ImageWidget(thing: widget.thing),
             ),
           ),
         ],
@@ -56,20 +58,20 @@ class _LocationWidgetState extends State<LocationWidget> {
       setState(() => isExpanded = true);
       return;
     }
-
+print('in màn hình ');
     Navigator.of(context).push(
       PageRouteBuilder(
-        transitionDuration: Duration(milliseconds: 500),
-        reverseTransitionDuration: Duration(milliseconds: 500),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (context, animation, secondaryAnimation) {
           final curvedAnimation = CurvedAnimation(
             parent: animation,
-            curve: Interval(0, 0.5),
+            curve: const Interval(0, 0.5),
           );
 
           return FadeTransition(
             opacity: curvedAnimation,
-            child: DetailPage(location: widget.location, animation: animation),
+            child: DetailPage(thing: widget.thing, animation: animation),
           );
         },
       ),

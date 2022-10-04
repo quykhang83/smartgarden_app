@@ -5,6 +5,7 @@ import 'package:smartgarden_app/models/actuator.dart';
 import '../data/hero_tag.dart';
 import '../data/locations.dart';
 import '../models/location.dart';
+import '../models/thing.dart';
 import '../widget/hero_widget.dart';
 
 class ControlPanel extends StatefulWidget {

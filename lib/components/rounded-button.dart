@@ -24,6 +24,7 @@ class RoundedButton extends StatelessWidget {
       ),
       child: TextButton(
         onPressed: press as void Function()?,
+
         child: Text(
           buttonName,
           style: kBodyText.copyWith(fontWeight: FontWeight.bold),

@@ -17,7 +17,6 @@ import '../controllers/api/my_api.dart';
 class MainBoard extends StatefulWidget {
   static String id = "/homepage";
   const MainBoard({Key? key}) : super(key: key);
-
   @override
   State<MainBoard> createState() => _MainBoardState();
 }
@@ -30,41 +29,9 @@ class _MainBoardState extends State<MainBoard> {
   @override
   void initState() {
     // TODO: implement initState
-    _getData();
     super.initState();
+
   }
-
-  _getData() async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    token = localStorage.getString('token')!;
-    header =  {
-      'Content-type' : 'application/json',
-      'Accept' : 'application/json',
-      'Charset': 'utf-8',
-      'token': token,
-    };
-    setState(() {
-
-    });
-    var res = await CallApi().getDataHeader('getThings', header);
-    var body = json.decode(res.body);
-    print(body);
-    if (body['success']) {
-
-      var data = body['data'].map((value)=>Thing.fromJson(value)).toList();
-
-      for (Thing e in data ){
-        print(e.id);
-        print(e.name);
-      }
-
-    } else {
-      print(body['message']);
-    }
-  }
-
-
-
   @override
   Widget build(BuildContext context) => ZoomDrawer(
     // style: DrawerStyle.style2,
@@ -79,18 +46,15 @@ class _MainBoardState extends State<MainBoard> {
     mainScreen: getScreen(),
     menuScreen: Builder(
       builder: (context) => MenuPage(
-        currentItem: currentItem,
-        onSelectedItem: (item) {
-
-          setState(() {
-            currentItem = item;
-            print('Bấm dô đây là qua');
-          });
-
-
-          ZoomDrawer.of(context)!.close();
-        },
-      ),
+          currentItem: currentItem,
+          onSelectedItem: (item) {
+            setState(() {
+              currentItem = item;
+              print('Bấm dô đây là qua');
+            });
+            ZoomDrawer.of(context)!.close();
+          },
+        ),
     ),
   );
 

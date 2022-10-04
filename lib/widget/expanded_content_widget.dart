@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:smartgarden_app/data/hero_tag.dart';
 import 'package:smartgarden_app/data/locations.dart';
 import 'package:smartgarden_app/models/location.dart';
+import 'package:smartgarden_app/models/thing.dart';
 import 'package:smartgarden_app/widget/hero_widget.dart';
 import 'package:smartgarden_app/widget/stars_widget.dart';
 
 class ExpandedContentWidget extends StatelessWidget {
-  final Location location;
+  final Thing thing;
 
   const ExpandedContentWidget({
-    required this.location,
+    required this.thing,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
@@ -23,38 +24,38 @@ class ExpandedContentWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            HeroWidget(
-              tag: HeroTag.addressLine1(location),
-              child: Text(location.addressLine1),
-            ),
+          children:  [
+            // HeroWidget(
+            //   tag: HeroTag.addressLine1(thing),
+            //   child: Text(thing),
+            // ),
             SizedBox(height: 8),
-            buildAddressRating(location: location),
+            // buildAddressRating(thing: thing),
             SizedBox(height: 12),
-            buildReview(location: location)
+            // buildReview(t: thing)
           ],
         ),
       );
 
-  Widget buildAddressRating({
-    required Location location,
-  }) =>
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          HeroWidget(
-            tag: HeroTag.addressLine2(location),
-            child: Text(
-              location.addressLine2,
-              style: TextStyle(color: Colors.black45),
-            ),
-          ),
-          HeroWidget(
-            tag: HeroTag.stars(location),
-            child: StarsWidget(stars: location.starRating),
-          ),
-        ],
-      );
+  // Widget buildAddressRating({
+  //   required Thing thing,
+  // }) =>
+  //     Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         HeroWidget(
+  //           tag: HeroTag.addressLine2(thing),
+  //           child: Text(
+  //             thing.name.toString(),
+  //             style: TextStyle(color: Colors.black45),
+  //           ),
+  //         ),
+  //         HeroWidget(
+  //           tag: HeroTag.stars(location),
+  //           child: StarsWidget(stars: location.starRating),
+  //         ),
+  //       ],
+  //     );
 
   Widget buildReview({
     required Location location,

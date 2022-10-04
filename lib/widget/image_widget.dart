@@ -4,11 +4,13 @@ import 'package:smartgarden_app/models/location.dart';
 import 'package:smartgarden_app/widget/hero_widget.dart';
 import 'package:smartgarden_app/widget/lat_long_widget.dart';
 
+import '../models/thing.dart';
+
 class ImageWidget extends StatelessWidget {
-  final Location location;
+  final Thing thing;
 
   const ImageWidget({
-    required this.location,
+    required this.thing,
     Key? key,
   }) : super(key: key);
 
@@ -37,7 +39,7 @@ class ImageWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   buildTopText(),
-                  LatLongWidget(location: location),
+                  // LatLongWidget(location: location),
                 ],
               ),
             )
@@ -49,16 +51,16 @@ class ImageWidget extends StatelessWidget {
 
   Widget buildImage() => SizedBox.expand(
         child: HeroWidget(
-          tag: HeroTag.image(location.urlImage),
+          tag: HeroTag.image(thing.name.toString()),
           child: ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(8)),
-            child: Image.asset(location.urlImage, fit: BoxFit.cover),
+            child: Image.network(thing.avtImage.toString(), fit: BoxFit.cover),
           ),
         ),
       );
 
   Widget buildTopText() => Text(
-        location.name,
+        thing.name.toString(),
         style: const TextStyle(
           backgroundColor: Color(0x66111010),
           color: Colors.white,

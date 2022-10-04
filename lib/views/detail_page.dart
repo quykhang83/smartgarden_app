@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/data/hero_tag.dart';
+import 'package:smartgarden_app/data/locations.dart';
 import 'package:smartgarden_app/models/location.dart';
 import 'package:smartgarden_app/views/control_panel.dart';
 import 'package:smartgarden_app/views/singup_login/login-screen.dart';
@@ -8,14 +9,15 @@ import 'package:smartgarden_app/widget/hero_widget.dart';
 import 'package:smartgarden_app/widget/lat_long_widget.dart';
 import 'package:smartgarden_app/widget/reviews_widget.dart';
 
+import '../models/thing.dart';
 import 'gardens_list.dart';
 
 class DetailPage extends StatelessWidget {
-  final Location location;
+  final Thing thing;
   final Animation<double> animation;
 
   DetailPage({
-    required this.location,
+    required this.thing,
     required this.animation,
     Key? key,
   }) : super(key: key);
@@ -28,7 +30,7 @@ class DetailPage extends StatelessWidget {
         elevation: 0,
         backgroundColor: const Color(0x80111010),
         title: Text(
-          location.name,
+          thing.name.toString(),
           style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 25),
         ),
         centerTitle: true,
@@ -101,15 +103,15 @@ class DetailPage extends StatelessWidget {
                     children: [
                       SizedBox.expand(
                         child: HeroWidget(
-                          tag: HeroTag.image(location.urlImage),
+                          tag: HeroTag.image(thing.avtImage.toString()),
                           child:
-                              Image.asset(location.urlImage, fit: BoxFit.cover),
+                              Image.network(thing.avtImage.toString(), fit: BoxFit.cover),
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        child: LatLongWidget(location: location),
-                      ),
+                      // Container(
+                      //   padding: const EdgeInsets.all(8),
+                      //   child: LatLongWidget(location: location),
+                      // ),
                     ],
                   ),
                 ),
@@ -118,15 +120,15 @@ class DetailPage extends StatelessWidget {
                     child: Container(
                       color: Colors.blueGrey,
                       child: ReviewsWidget(
-                          location: location, animation: animation),
+                          thing: thing, animation: animation),
                     )),
-                Expanded(
-                    flex: 1,
-                    child: Container(
-                      color: Colors.indigo,
-                      child: ControlPanel(location: location),
-                    )
-                ),
+                // Expanded(
+                //     flex: 1,
+                //     child: Container(
+                //       color: Colors.indigo,
+                //       child: ControlPanel(location: location),
+                //     )
+                // ),
               ],
             ),
           ),

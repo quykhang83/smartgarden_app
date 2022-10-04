@@ -27,6 +27,7 @@ class ProfileMenu extends StatelessWidget {
           backgroundColor: Color(0xFFF5F6F9),
         ),
         onPressed: press,
+
         child: Row(
           children: [
             SvgPicture.asset(

@@ -90,7 +90,7 @@ class CallApi{
 
   getPublicData(apiUrl) async {
     http.Response response = await http.get(
-        Uri.parse(_url+apiUrl));
+      Uri.parse(_url+apiUrl));
     try{
       if(response.statusCode == 200){
         return response;

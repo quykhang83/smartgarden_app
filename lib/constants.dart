@@ -3,7 +3,7 @@ import 'package:smartgarden_app/size_config.dart';
 
 const kPrimaryColor = Color(0xFF1AB422);
 const kPrimaryLightColor = Color(0xFFFFECDF);
-const kPrimaryGradientColor = LinearGradient(
+LinearGradient kPrimaryGradientColor = const LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [Color(0xFF4ACD0F), Color(0xFF1AB422)],
