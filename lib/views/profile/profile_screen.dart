@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smartgarden_app/views/singup_login/login-screen.dart';
+import 'package:smartgarden_app/views/singup_login/login_screen.dart';
 
 import '../../components/custom_app_bar.dart';
 import '../../constants.dart';
@@ -90,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Container(
                   height: 548,
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   decoration: const BoxDecoration(
                     // color: Color(0xFFFFBD59),
                     image: DecorationImage(

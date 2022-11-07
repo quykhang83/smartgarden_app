@@ -4,8 +4,9 @@ import 'package:smartgarden_app/views/login_success/login_success_screen.dart';
 import 'package:smartgarden_app/views/main_board.dart';
 import 'package:smartgarden_app/views/otp/otp_screen.dart';
 import 'package:smartgarden_app/views/profile/profile_screen.dart';
-import 'package:smartgarden_app/views/singup_login/create-new-account.dart';
-import 'package:smartgarden_app/views/singup_login/login-screen.dart';
+import 'package:smartgarden_app/views/sensor_collection/sensor_list.dart';
+import 'package:smartgarden_app/views/singup_login/create_new_account.dart';
+import 'package:smartgarden_app/views/singup_login/login_screen.dart';
 
 // We use name route
 // All our routes will be available here
@@ -17,4 +18,5 @@ final Map<String, WidgetBuilder> routes = {
   OtpScreen.id: (context) => OtpScreen(),
   LoginSuccessScreen.id: (context) => LoginSuccessScreen(),
   ProfileScreen.id: (context) => ProfileScreen(),
+  SensorList.id: (context) => SensorList(),
 };

@@ -23,9 +23,10 @@ class _ThingsWidgetState extends State<ThingsWidget> {
   Widget build(BuildContext context) => Column(
         children: [
           const SizedBox(height: 30),
-
           Text(
-            '${pageIndex + 1}/${widget.thing.length}',
+            (widget.thing.isNotEmpty)
+              ? '${pageIndex + 1}/${widget.thing.length}'
+              : '0/0',
             style: const TextStyle(color: Colors.white70, fontSize: 20, fontWeight: FontWeight.w700),
           ),
           Expanded(
@@ -34,7 +35,7 @@ class _ThingsWidgetState extends State<ThingsWidget> {
               itemCount: widget.thing.length,
               itemBuilder: (context, index) {
                 print(widget.thing[index].name);
-                return ThingWidget(thing: widget.thing[index]);
+                return ThingWidget(thing: widget.thing[index], listThing: widget.thing);
               },
               onPageChanged: (index) => setState(() => pageIndex = index),
             ),

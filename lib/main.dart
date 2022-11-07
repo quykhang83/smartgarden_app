@@ -7,8 +7,8 @@ import 'package:smartgarden_app/routes.dart';
 import 'package:smartgarden_app/views/demo_fetch_api.dart';
 import 'package:smartgarden_app/views/main_board.dart';
 import 'package:smartgarden_app/views/otp/otp_screen.dart';
-import 'package:smartgarden_app/views/singup_login/create-new-account.dart';
-import 'package:smartgarden_app/views/singup_login/login-screen.dart';
+import 'package:smartgarden_app/views/singup_login/create_new_account.dart';
+import 'package:smartgarden_app/views/singup_login/login_screen.dart';
 
 import 'views/gardens_list.dart';
 

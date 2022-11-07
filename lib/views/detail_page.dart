@@ -4,7 +4,8 @@ import 'package:smartgarden_app/data/hero_tag.dart';
 import 'package:smartgarden_app/data/locations.dart';
 import 'package:smartgarden_app/models/location.dart';
 import 'package:smartgarden_app/views/control_panel.dart';
-import 'package:smartgarden_app/views/singup_login/login-screen.dart';
+import 'package:smartgarden_app/views/sensor_collection/sensor_list.dart';
+import 'package:smartgarden_app/views/singup_login/login_screen.dart';
 import 'package:smartgarden_app/widget/hero_widget.dart';
 import 'package:smartgarden_app/widget/lat_long_widget.dart';
 import 'package:smartgarden_app/widget/reviews_widget.dart';
@@ -14,11 +15,15 @@ import 'gardens_list.dart';
 
 class DetailPage extends StatelessWidget {
   final Thing thing;
+  final List<Thing> listThing;
   final Animation<double> animation;
+  final List<int> dataSensors;
 
   DetailPage({
     required this.thing,
+    required this.listThing,
     required this.animation,
+    required this.dataSensors,
     Key? key,
   }) : super(key: key);
 
@@ -104,8 +109,8 @@ class DetailPage extends StatelessWidget {
                       SizedBox.expand(
                         child: HeroWidget(
                           tag: HeroTag.image(thing.avtImage.toString()),
-                          child:
-                              Image.network(thing.avtImage.toString(), fit: BoxFit.cover),
+                          child: Image.network(thing.avtImage.toString(),
+                              fit: BoxFit.cover),
                         ),
                       ),
                       // Container(
@@ -120,15 +125,17 @@ class DetailPage extends StatelessWidget {
                     child: Container(
                       color: Colors.blueGrey,
                       child: ReviewsWidget(
-                          thing: thing, animation: animation),
+                          thing: thing,
+                          listThing: listThing,
+                          animation: animation,
+                          dataSensors: dataSensors),
                     )),
-                // Expanded(
-                //     flex: 1,
-                //     child: Container(
-                //       color: Colors.indigo,
-                //       child: ControlPanel(location: location),
-                //     )
-                // ),
+                Expanded(
+                    flex: 1,
+                    child: Container(
+                      color: Colors.indigo,
+                      child: ControlPanel(thing: thing, listThing: listThing),
+                    )),
               ],
             ),
           ),
@@ -138,10 +145,9 @@ class DetailPage extends StatelessWidget {
   void onSelected(BuildContext context, int item) {
     switch (item) {
       case 0:
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => GardensList()),
-          (route) => false,
-        );
+        print("Tap to sensor list!");
+        Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext ctx) => SensorList()));
         break;
       // case 1:
       //   Navigator.of(context).push(

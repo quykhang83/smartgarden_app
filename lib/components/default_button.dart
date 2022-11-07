@@ -16,12 +16,12 @@ class DefaultButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: getProportionateScreenHeight(56),
+      // height: getProportionateScreenHeight(56),
+      height: (56 / 812.0) * MediaQuery.of(context).size.height,
       child: TextButton(
         style: TextButton.styleFrom(
-          shape:
+          foregroundColor: Colors.white, shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          primary: Colors.white,
           backgroundColor: kPrimaryColor,
         ),
         onPressed: press as void Function()?,
@@ -29,7 +29,8 @@ class DefaultButton extends StatelessWidget {
         child: Text(
           text!,
           style: TextStyle(
-            fontSize: getProportionateScreenWidth(18),
+            // fontSize: getProportionateScreenWidth(18),
+            fontSize: (18 / 375.0) * MediaQuery.of(context).size.width,
             color: Colors.white,
           ),
         ),

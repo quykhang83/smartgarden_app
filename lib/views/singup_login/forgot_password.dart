@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smartgarden_app/views/otp/otp_screen.dart';
 
-import '../../components/background-image.dart';
-import '../../components/rounded-button.dart';
-import '../../components/text-field-input.dart';
+import '../../components/background_image.dart';
+import '../../components/rounded_button.dart';
+import '../../components/text_field_input.dart';
 import '../../constants.dart';
 
 class ForgotPassword extends StatelessWidget {

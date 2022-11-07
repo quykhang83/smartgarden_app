@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:smartgarden_app/models/actuator.dart';
 
+import '../controllers/api/my_api.dart';
 import '../data/hero_tag.dart';
 import '../data/locations.dart';
 import '../models/location.dart';
@@ -9,11 +12,13 @@ import '../models/thing.dart';
 import '../widget/hero_widget.dart';
 
 class ControlPanel extends StatefulWidget {
-  final Location location;
+  final Thing thing;
+  final List<Thing> listThing;
 
   const ControlPanel({
     Key? key,
-    required this.location
+    required this.thing,
+    required this.listThing,
   }) : super(key: key);
 
   @override
@@ -23,7 +28,7 @@ class ControlPanel extends StatefulWidget {
 class _ControlPanelState extends State<ControlPanel>
     with TickerProviderStateMixin {
   // 0. Quantity of controller
-  final numbers = List.generate(2, (index) => '$index');
+  // final numbers = List.generate(2, (index) => '$index');
   final scrollController = ScrollController();
 
   // 1. Create a controller in the state of the StatefulWidget
@@ -34,22 +39,33 @@ class _ControlPanelState extends State<ControlPanel>
   // ...
   bool _checked = false;
 
-  List<Actuator> actuators = demoActuators;
+  List<Actuator> actuators = [];
 
   // ...
   @override
   void initState() {
     super.initState();
 
+    getActuatorOfThing().then((value) {
+
+      setState((){
+        for(Actuator e in value!){
+          print("${e.id}: ${e.name}");
+          actuators.add(e);
+        }
+        // actuators.addAll(value);
+      });
+    });
+
     //--------------------Fetch controller data----------------------//
     List<bool> receivedController = [true, false];
 
     for(int i=0; i<actuators.length; i++){
-      actuators[i].controller.value = receivedController[i];
+      actuators[i].controller?.value = receivedController[i];
 
-      actuators[i].controller.addListener(() {
+      actuators[i].controller?.addListener(() {
         setState(() {
-          if (actuators[i].controller.value) {
+          if (actuators[i].controller!.value) {
             _checked = true;
           } else {
             _checked = false;
@@ -66,24 +82,38 @@ class _ControlPanelState extends State<ControlPanel>
     super.dispose();
   }
 
+  Future<List<Actuator>?> getActuatorOfThing() async {
+    var res = await CallApi().getData('get/things(${widget.thing.id})/actuator?top=all');
+    var body = json.decode(res.body);
+    if (body.toString().isNotEmpty) {
+      var thing = body as List<dynamic>;
+      var data = thing.map((e) => Actuator.fromJson(e)).toList();
+      print("Get data success!!!");
+      return data;
+    } else {
+      print("Some things were wrong!");
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
         childAspectRatio: 0.34,
-        mainAxisSpacing: 8,
+        // mainAxisSpacing: 8,
         crossAxisSpacing: 8,
       ),
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.all(4),
       controller: scrollController,
-      itemCount: numbers.length,
+      itemCount: actuators.length,
       itemBuilder: (context, index) {
-        final actuator = widget.location.actuators[index];
-        final item = numbers[index];
+        final actuator = actuators[index];
+        final item = actuators[index].id;
 
-        return buildActuator(item, actuator);
+        return buildActuator(item.toString(), actuator);
       },
     );
   }
@@ -102,19 +132,13 @@ class _ControlPanelState extends State<ControlPanel>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               HeroWidget(
-                tag: HeroTag.avatar2(actuator, locations.indexOf(widget.location)),
+                tag: HeroTag.avatar2(demoActuators[actuator.id!-1], widget.listThing.indexOf(widget.thing)),
                 child: CircleAvatar(
                   radius: 27,
                   backgroundColor: Colors.black12,
-                  backgroundImage: AssetImage(actuator.urlImg),
+                  backgroundImage: AssetImage(demoActuators[actuator.id!-1].urlImg!),
                 ),
               ),
-              // Text(
-              //   actuators[int.parse(number)].name,
-              //   textAlign: TextAlign.center,
-              //   style:
-              //   const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              // ),
             ],
           ),
           child: Row(
@@ -128,7 +152,7 @@ class _ControlPanelState extends State<ControlPanel>
                 borderRadius: BorderRadius.circular(10),
                 width: 115,
                 height: 55,
-                controller: actuators[int.parse(number)].controller,
+                controller: actuator.controller,
               ),
             ],
           ),

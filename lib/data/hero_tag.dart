@@ -19,5 +19,8 @@ class HeroTag {
       sensor.urlImg + position.toString();
 
   static String avatar2(Actuator actuator, int position) =>
-      actuator.urlImg + position.toString();
+      actuator.urlImg! + position.toString();
+
+  static String avatar3(int sensorId, int position) =>
+      demoSensors[sensorId-1].urlImg + position.toString();
 }

@@ -51,7 +51,7 @@ class ImageWidget extends StatelessWidget {
 
   Widget buildImage() => SizedBox.expand(
         child: HeroWidget(
-          tag: HeroTag.image(thing.name.toString()),
+          tag: HeroTag.image(thing.avtImage.toString()),
           child: ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(8)),
             child: Image.network(thing.avtImage.toString(), fit: BoxFit.cover),

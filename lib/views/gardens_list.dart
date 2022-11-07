@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/components/custom_app_bar.dart';
 import 'package:smartgarden_app/widget/locations_widget.dart';
 
-import '../components/background-image.dart';
+import '../components/background_image.dart';
 import '../controllers/api/my_api.dart';
 import '../models/thing.dart';
 

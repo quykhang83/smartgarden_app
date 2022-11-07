@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/views/main_board.dart';
-import 'package:smartgarden_app/views/singup_login/login-screen.dart';
+import 'package:smartgarden_app/views/singup_login/login_screen.dart';
 
 
 class AuthPage extends StatefulWidget {

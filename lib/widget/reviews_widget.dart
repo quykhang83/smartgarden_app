@@ -10,20 +10,23 @@ import 'package:smartgarden_app/models/location.dart';
 import 'package:smartgarden_app/widget/hero_widget.dart';
 
 import '../components/circle_progress.dart';
-import '../models/DataStream.dart';
+import '../models/dataStream.dart';
 import '../models/observation.dart';
 import '../models/sensor.dart';
 import '../models/thing.dart';
 
 class ReviewsWidget extends StatefulWidget {
   final Thing thing;
+  final List<Thing> listThing;
   final Animation<double> animation;
+  final List<int> dataSensors;
 
 
   const ReviewsWidget({
     required this.thing,
+    required this.listThing,
     required this.animation,
-
+    required this.dataSensors,
     Key? key,
   }) : super(key: key);
 
@@ -33,9 +36,11 @@ class ReviewsWidget extends StatefulWidget {
 
 class _ReviewsWidgetState extends State<ReviewsWidget>
     with TickerProviderStateMixin {
-  final numbers = List.generate(4, (index) => '$index');
+  // int x = widget.dataSensors.length;
+  // final numbers = List.generate(widget.dataSensors.length, (index) => '$index');
   final controller = ScrollController();
   bool isLoading = false;
+  bool isHadLocalData = false;
 
   List<Observation>? obsTemperature = [];
   List<Observation>? obsHumidity = [];
@@ -46,10 +51,11 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   late AnimationController progressController;
   List<Animation<double>> sensorAnimations = <Animation<double>>[];
 
-  List<double> valueObs = [32, 20, 70, 90];
+  List<double> valueObs = [0, 0, 0, 0];
+  List<double> oldValueObs = [0, 0, 0, 0];
   List<int> idDataStream = [];
   late Timer timer;
-  String token = '';
+  // String token = '';
   late Map<String, String> header ;
   List<DataStream> dataStream = [];
   @override
@@ -65,12 +71,10 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
       });
     });
 
-
     //--------------------Fetch data measure----------------------//
     _DashboardInit();
-    timer = Timer.periodic(const Duration(seconds: 10), (Timer t) => _DashboardInit());
+    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) => _DashboardInit());
     // double temp = -10.0;
-
 
     // temp = observations![0].result![0];
     // print(temp);
@@ -80,66 +84,128 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   }
 
   _DashboardInit() async {
-    print('123 $idDataStream');
-    sensorAnimations.clear();
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    print('123 $idDataStream ${widget.dataSensors}');
+    // sensorAnimations.clear();
     obsTemperature?.clear();
     obsHumidity?.clear();
     obsLight?.clear();
     obsCO2?.clear();
+    isHadLocalData = (localStorage.getDouble('1')!=null);
     await _getObsData(idDataStream);
-    for (int i = 0; i < dataStream.length; i++){
-      Sensor sensor = demoSensors[i];
-      double value1 = valueObs[0];
-      double value2 = valueObs[1];
-      double value3 = valueObs[2];
-      double value4 = valueObs[3];
+    if(sensorAnimations.isEmpty){
+      for (int i = 0; i < dataStream.length; i++){
+        Sensor sensor = demoSensors[i];
+        double value1 = localStorage.getDouble('1') ?? valueObs[0];
+        // print(localStorage.getDouble('1'));
+        double value2 = localStorage.getDouble('2') ?? valueObs[1];
+        double value3 = localStorage.getDouble('3') ?? valueObs[2];
+        double value4 = localStorage.getDouble('4') ?? valueObs[3];
 
-      progressController = AnimationController(
-          vsync: this, duration: const Duration(milliseconds: 1000)); //5s
+        progressController = AnimationController(
+            vsync: this, duration: const Duration(milliseconds: 1000)); //5s
 
-      Animation<double> sensorAnimation1 =
-      Tween<double>(begin: sensor.initVale, end: value1)
-          .animate(progressController)
-        ..addListener(() {
-          setState(() {
+        Animation<double> sensorAnimation1 =
+        Tween<double>(begin: sensor.initVale, end: value1)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
 
+            });
           });
-        });
 
-      Animation<double> sensorAnimation2 =
-      Tween<double>(begin: sensor.initVale, end: value2)
-          .animate(progressController)
-        ..addListener(() {
-          setState(() {
+        Animation<double> sensorAnimation2 =
+        Tween<double>(begin: sensor.initVale, end: value2)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
 
+            });
           });
-        });
 
-      Animation<double> sensorAnimation3 =
-      Tween<double>(begin: sensor.initVale, end: value3)
-          .animate(progressController)
-        ..addListener(() {
-          setState(() {
+        Animation<double> sensorAnimation3 =
+        Tween<double>(begin: sensor.initVale, end: value3)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
 
+            });
           });
-        });
 
-      Animation<double> sensorAnimation4 =
-      Tween<double>(begin: sensor.initVale, end: value4)
-          .animate(progressController)
-        ..addListener(() {
-          setState(() {
+        Animation<double> sensorAnimation4 =
+        Tween<double>(begin: sensor.initVale, end: value4)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
 
+            });
           });
-        });
 
 
-      sensorAnimations.add(sensorAnimation1);
-      sensorAnimations.add(sensorAnimation2);
-      sensorAnimations.add(sensorAnimation3);
-      sensorAnimations.add(sensorAnimation4);
+        sensorAnimations.add(sensorAnimation1);
+        sensorAnimations.add(sensorAnimation2);
+        sensorAnimations.add(sensorAnimation3);
+        sensorAnimations.add(sensorAnimation4);
 
-      progressController.forward();
+        progressController.forward();
+      }
+    }
+    else{
+      sensorAnimations.clear();
+      for (int i = 0; i < dataStream.length; i++){
+        Sensor sensor = demoSensors[i];
+        double value1 = localStorage.getDouble('1') ?? valueObs[0];
+        double value2 = localStorage.getDouble('2') ?? valueObs[1];
+        double value3 = localStorage.getDouble('3') ?? valueObs[2];
+        double value4 = localStorage.getDouble('4') ?? valueObs[3];
+
+        progressController = AnimationController(
+            vsync: this, duration: const Duration(milliseconds: 1000)); //5s
+
+        Animation<double> sensorAnimation1 =
+        Tween<double>(begin: oldValueObs[0], end: value1)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
+
+            });
+          });
+
+        Animation<double> sensorAnimation2 =
+        Tween<double>(begin: oldValueObs[1], end: value2)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
+
+            });
+          });
+
+        Animation<double> sensorAnimation3 =
+        Tween<double>(begin: oldValueObs[2], end: value3)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
+
+            });
+          });
+
+        Animation<double> sensorAnimation4 =
+        Tween<double>(begin: oldValueObs[3], end: value4)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
+
+            });
+          });
+
+
+        sensorAnimations.add(sensorAnimation1);
+        sensorAnimations.add(sensorAnimation2);
+        sensorAnimations.add(sensorAnimation3);
+        sensorAnimations.add(sensorAnimation4);
+
+        progressController.forward();
+      }
     }
 
   }
@@ -148,55 +214,28 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     for(int i = 0; i < index.length; i++){
       var res = await CallApi().getData('get/datastreams(${index[i]})/observations');
       var body = json.decode(res.body);
-      //Light
-      if (res.statusCode == 200 && index[i] == 1 ) {
+
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      if (res.statusCode == 200) {
         var json1 = res.body;
         obsLight = observationFromJson(json1);
         setState(() {
-          valueObs[index[i] - 1] = obsLight![0].result![0];
+          valueObs[widget.dataSensors[i]-1] = obsLight![0].result![0];
         });
-        // valueObs[0] = observations![0].result![0];
-        // print(valueObs[0]);
 
-      }
-      //CO2
-      else if (res.statusCode == 200 && index[i] == 2 ) {
-        var json1 = res.body;
-        obsCO2= observationFromJson(json1);
-        setState(() {
-          valueObs[index[i] - 1] = obsCO2![0].result![0];
-        });
-        // valueObs[0] = observations![0].result![0];
-        // print(valueObs[0]);
+        if(localStorage.get('${widget.dataSensors[i]}')!=null){
+          oldValueObs[widget.dataSensors[i]-1] = localStorage.getDouble('${widget.dataSensors[i]}') ?? 0;
+        }
 
-      }
-      //Temperature
-      else if (res.statusCode == 200 && index[i] == 3 ) {
-        var json1 = res.body;
-        obsTemperature = observationFromJson(json1);
-        setState(() {
-          valueObs[index[i] - 1] = obsTemperature![0].result![0];
-        });
-        // valueObs[0] = observations![0].result![0];
-        // print(valueObs[0]);
+        localStorage.setDouble('${widget.dataSensors[i]}', obsLight![0].result![0]);
 
-      }
-      //Hum
-      else if (res.statusCode == 200 && index[i] == 4 ) {
-        var json1 = res.body;
-        obsHumidity = observationFromJson(json1);
-        setState(() {
-          valueObs[index[i] - 1] = obsHumidity![0].result![0];
-        });
-        // valueObs[0] = observations![0].result![0];
-        // print(valueObs[0]);
 
       }
       else {
         // _showMsg(body['message']);
         print("Some things was wrong!!");
       }
-      if (body.toString().isNotEmpty) {
+      if (body.toString().isNotEmpty && localStorage.get('${widget.dataSensors[i]}')!=null) {
         setState(() {
           isLoading = true;
         });
@@ -227,9 +266,14 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     super.dispose();
   }
 
+  // Future<double?> getValueSensorFromLocal(int idSensor) async{
+  //   SharedPreferences localStorage = await SharedPreferences.getInstance();
+  //   return localStorage.getDouble('$idSensor');
+  // }
+
   @override
   Widget build(BuildContext context) => Visibility(
-    visible: isLoading,
+    visible: (isLoading),
     replacement: const Center(
       child: CircularProgressIndicator(),
     ),
@@ -245,10 +289,11 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     ),
     padding: const EdgeInsets.all(4),
     controller: controller,
-    itemCount: numbers.length,
+    itemCount: widget.dataSensors.length,
     itemBuilder: (context, index) {
-      final sensor = demoSensors[index];
-      final item = numbers[index];
+      final sensor = demoSensors[widget.dataSensors[index]-1];
+      // final item = numbers[index];
+      final item = widget.dataSensors[index];
 
       return AnimatedBuilder(
         animation: widget.animation,
@@ -259,7 +304,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
           ),
           child: child,
         ),
-        child: buildSensor(item, sensor),
+        child: buildSensor(item.toString(), sensor),
       );
     },
   );
@@ -276,16 +321,16 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
       header: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // HeroWidget(
-          //   tag: HeroTag.avatar(sensor, locations.indexOf(locations)),
-          //   child: CircleAvatar(
-          //     radius: 16,
-          //     backgroundColor: Colors.black12,
-          //     backgroundImage: AssetImage(sensor.urlImg),
-          //   ),
-          // ),
+          HeroWidget(
+            tag: HeroTag.avatar(sensor, widget.listThing.indexOf(widget.thing)),
+            child: CircleAvatar(
+              radius: 16,
+              backgroundColor: Colors.black12,
+              backgroundImage: AssetImage(sensors[int.parse(number)-1].urlImg),
+            ),
+          ),
           Text(
-            sensors[int.parse(number)].name,
+            sensors[int.parse(number)-1].name,
             textAlign: TextAlign.center,
             style:
             const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -293,15 +338,15 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
         ],
       ),
       child: Center(
-          child: isLoading
+          child: (isLoading)
               ? Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               const SizedBox(height: 5),
               CustomPaint(
                 foregroundPainter: CircleProgress(
-                    value: sensorAnimations.isNotEmpty ? sensorAnimations[int.parse(number)].value : 0,
-                    sensor: sensors[int.parse(number)]),
+                    value: sensorAnimations.isNotEmpty ? sensorAnimations[int.parse(number)-1].value : 0,
+                    sensor: sensors[int.parse(number)-1]),
                 child: SizedBox(
                   width: 150,
                   height: 150,
@@ -310,13 +355,13 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          sensorAnimations.isNotEmpty ? '${sensorAnimations[int.parse(number)].value.toInt()}' : '',
+                          sensorAnimations.isNotEmpty ? '${sensorAnimations[int.parse(number)-1].value.toInt()}' : '',
                           style: const TextStyle(
                               fontSize: 50,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          sensors[int.parse(number)].unit,
+                          sensors[int.parse(number)-1].unit,
                           style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold),
