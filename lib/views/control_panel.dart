@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/models/actuator.dart';
 
 import '../controllers/api/my_api.dart';
@@ -37,11 +38,9 @@ class _ControlPanelState extends State<ControlPanel>
   // 2. In case, you want to call setState on switch changes.
   // 2.1. Add event listener, for example in the initState() method.
   // ...
-  bool _checked = false;
 
   List<Actuator> actuators = [];
 
-  // ...
   @override
   void initState() {
     super.initState();
@@ -50,30 +49,29 @@ class _ControlPanelState extends State<ControlPanel>
 
       setState((){
         for(Actuator e in value!){
-          print("${e.id}: ${e.name}");
+          print("${e.id}: ${e.name} - ${e.controlState} - ${e.controller?.value}");
+          e.controller = (e.controlState == 0) ? ValueNotifier<bool>(false) : ValueNotifier<bool>(true);
+
           actuators.add(e);
         }
-        // actuators.addAll(value);
+        for(int i=0; i<actuators.length; i++){
+
+          actuators[i].controller?.addListener(() {
+            setState(() {
+              if (actuators[i].controller!.value) {
+                actuators[i].controlState = -1;
+                _postActuatorState(-1, widget.thing.id!, actuators[i].id!);
+              } else {
+                actuators[i].controlState = 0;
+                _postActuatorState(0, widget.thing.id!, actuators[i].id!);
+              }
+              print("${actuators[i].name}: ${actuators[i].controller!.value}");
+            });
+          });
+        }
+
       });
     });
-
-    //--------------------Fetch controller data----------------------//
-    List<bool> receivedController = [true, false];
-
-    for(int i=0; i<actuators.length; i++){
-      actuators[i].controller?.value = receivedController[i];
-
-      actuators[i].controller?.addListener(() {
-        setState(() {
-          if (actuators[i].controller!.value) {
-            _checked = true;
-          } else {
-            _checked = false;
-          }
-          print("${actuators[i].name}: $_checked");
-        });
-      });
-    }
   }
 
   @override
@@ -94,6 +92,28 @@ class _ControlPanelState extends State<ControlPanel>
       print("Some things were wrong!");
       return null;
     }
+  }
+
+  _postActuatorState(int taskingParameters, int thing_id, int actuator_id) async {
+    var token = await CallApi().getToken();
+    var data = {
+      'taskingParameters': taskingParameters,
+      'thing_id': thing_id,
+      'actuator_id': actuator_id,
+      'token': token
+    };
+
+    // debugPrint();
+
+    var res = await CallApi().postData(data, 'post/task');
+    var body = json.decode(res.body);
+    print(body);
+    // if (body['success']) {
+    //   var user = localStorage.getString('user');
+    //   print(user);
+    // } else {
+    //   print("Some things were wrong");
+    // }
   }
 
   @override
@@ -152,6 +172,7 @@ class _ControlPanelState extends State<ControlPanel>
                 borderRadius: BorderRadius.circular(10),
                 width: 115,
                 height: 55,
+                // controller: demoActuators[actuator.id!-1].controller,
                 controller: actuator.controller,
               ),
             ],
