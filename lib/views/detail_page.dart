@@ -11,9 +11,10 @@ import 'package:smartgarden_app/widget/lat_long_widget.dart';
 import 'package:smartgarden_app/widget/reviews_widget.dart';
 
 import '../models/thing.dart';
+import 'automatic_mode/automode_panel.dart';
 import 'gardens_list.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   final Thing thing;
   final List<Thing> listThing;
   final Animation<double> animation;
@@ -28,6 +29,37 @@ class DetailPage extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  bool autoState = false;
+
+  @override
+  void initState() {
+    _getAutoState();
+    super.initState();
+  }
+
+  _getAutoState() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    // localStorage.setString('token', body['token']);
+    var autoVal = localStorage.getBool('autoState');
+    if (autoVal == null) {
+      localStorage.setBool('autoState', false);
+      autoVal = false;
+    }
+    autoState = autoVal;
+    print(autoState);
+  }
+
+  @override
+  void dispose() {
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
@@ -35,7 +67,7 @@ class DetailPage extends StatelessWidget {
         elevation: 0,
         backgroundColor: const Color(0x80111010),
         title: Text(
-          thing.name.toString(),
+          widget.thing.name.toString(),
           style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 25),
         ),
         centerTitle: true,
@@ -65,12 +97,17 @@ class DetailPage extends StatelessWidget {
                 ),
                 const PopupMenuItem<int>(
                   value: 1,
+                  child: Text('Automatic mode',
+                      style: TextStyle(fontWeight: FontWeight.w700)),
+                ),
+                const PopupMenuItem<int>(
+                  value: 2,
                   child: Text('Settings',
                       style: TextStyle(fontWeight: FontWeight.w700)),
                 ),
                 const PopupMenuDivider(),
                 PopupMenuItem<int>(
-                  value: 2,
+                  value: 3,
                   child: Row(
                     children: const [
                       Icon(Icons.logout),
@@ -108,8 +145,8 @@ class DetailPage extends StatelessWidget {
                     children: [
                       SizedBox.expand(
                         child: HeroWidget(
-                          tag: HeroTag.image(thing.avtImage.toString()),
-                          child: Image.network(thing.avtImage.toString(),
+                          tag: HeroTag.image(widget.thing.avtImage.toString()),
+                          child: Image.network(widget.thing.avtImage.toString(),
                               fit: BoxFit.cover),
                         ),
                       ),
@@ -123,18 +160,19 @@ class DetailPage extends StatelessWidget {
                 Expanded(
                     flex: 7,
                     child: Container(
-                      color: Colors.blueGrey,
+                      color: Colors.lightGreen[900],
                       child: ReviewsWidget(
-                          thing: thing,
-                          listThing: listThing,
-                          animation: animation,
-                          dataSensors: dataSensors),
+                          thing: widget.thing,
+                          listThing: widget.listThing,
+                          animation: widget.animation,
+                          dataSensors: widget.dataSensors),
                     )),
                 Expanded(
                     flex: 1,
                     child: Container(
                       color: Colors.indigo,
-                      child: ControlPanel(thing: thing, listThing: listThing),
+                      child: ControlPanel(
+                          thing: widget.thing, listThing: widget.listThing),
                     )),
               ],
             ),
@@ -149,12 +187,19 @@ class DetailPage extends StatelessWidget {
         Navigator.push(context,
             MaterialPageRoute(builder: (BuildContext ctx) => SensorList()));
         break;
-      // case 1:
-      //   Navigator.of(context).push(
-      //     MaterialPageRoute(builder: (context) => (){}),
-      //   );
-      //   break;
-      case 2:
+      case 1:
+        print("Tap to automatic mode!");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext ctx) => AutoModePanel(
+                      thing: widget.thing,
+                      listThing: widget.listThing,
+                      dataSensors: widget.dataSensors,
+                      autoState: autoState,
+                    ))).then((value) => {if (value) _getAutoState()});
+        break;
+      case 3:
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginScreen()),
           (route) => false,

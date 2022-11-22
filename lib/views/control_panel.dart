@@ -2,13 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartgarden_app/components/background_image.dart';
 import 'package:smartgarden_app/models/actuator.dart';
 
 import '../controllers/api/my_api.dart';
 import '../data/hero_tag.dart';
-import '../data/locations.dart';
-import '../models/location.dart';
 import '../models/thing.dart';
 import '../widget/hero_widget.dart';
 
@@ -46,16 +44,17 @@ class _ControlPanelState extends State<ControlPanel>
     super.initState();
 
     getActuatorOfThing().then((value) {
-
-      setState((){
-        for(Actuator e in value!){
-          print("${e.id}: ${e.name} - ${e.controlState} - ${e.controller?.value}");
-          e.controller = (e.controlState == 0) ? ValueNotifier<bool>(false) : ValueNotifier<bool>(true);
+      setState(() {
+        for (Actuator e in value!) {
+          print(
+              "${e.id}: ${e.name} - ${e.controlState} - ${e.controller?.value}");
+          e.controller = (e.controlState == 0)
+              ? ValueNotifier<bool>(false)
+              : ValueNotifier<bool>(true);
 
           actuators.add(e);
         }
-        for(int i=0; i<actuators.length; i++){
-
+        for (int i = 0; i < actuators.length; i++) {
           actuators[i].controller?.addListener(() {
             setState(() {
               if (actuators[i].controller!.value) {
@@ -69,7 +68,6 @@ class _ControlPanelState extends State<ControlPanel>
             });
           });
         }
-
       });
     });
   }
@@ -81,7 +79,8 @@ class _ControlPanelState extends State<ControlPanel>
   }
 
   Future<List<Actuator>?> getActuatorOfThing() async {
-    var res = await CallApi().getData('get/things(${widget.thing.id})/actuator?top=all');
+    var res = await CallApi()
+        .getData('get/things(${widget.thing.id})/actuator?top=all');
     var body = json.decode(res.body);
     if (body.toString().isNotEmpty) {
       var thing = body as List<dynamic>;
@@ -94,7 +93,8 @@ class _ControlPanelState extends State<ControlPanel>
     }
   }
 
-  _postActuatorState(int taskingParameters, int thing_id, int actuator_id) async {
+  _postActuatorState(
+      int taskingParameters, int thing_id, int actuator_id) async {
     var token = await CallApi().getToken();
     var data = {
       'taskingParameters': taskingParameters,
@@ -118,23 +118,31 @@ class _ControlPanelState extends State<ControlPanel>
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        childAspectRatio: 0.34,
-        // mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-      ),
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.all(4),
-      controller: scrollController,
-      itemCount: actuators.length,
-      itemBuilder: (context, index) {
-        final actuator = actuators[index];
-        final item = actuators[index].id;
+    return Stack(
+      children: [
+        const BackgroundImage(
+          image: 'assets/images/control-panel-bg.jpg',
+        ),
+        if (actuators.isNotEmpty)
+          GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1,
+              childAspectRatio: 0.34,
+              // mainAxisSpacing: 8, //comment it
+              crossAxisSpacing: 8,
+            ),
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(4),
+            controller: scrollController,
+            itemCount: actuators.length,
+            itemBuilder: (context, index) {
+              final actuator = actuators[index];
+              final item = actuators[index].id;
 
-        return buildActuator(item.toString(), actuator);
-      },
+              return buildActuator(item.toString(), actuator);
+            },
+          )
+      ],
     );
   }
 
@@ -152,12 +160,25 @@ class _ControlPanelState extends State<ControlPanel>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               HeroWidget(
-                tag: HeroTag.avatar2(demoActuators[actuator.id!-1], widget.listThing.indexOf(widget.thing)),
+                tag: HeroTag.avatar2(demoActuators[actuator.id! - 1],
+                    widget.listThing.indexOf(widget.thing)),
                 child: CircleAvatar(
-                  radius: 27,
+                  radius: 27, //27
                   backgroundColor: Colors.black12,
-                  backgroundImage: AssetImage(demoActuators[actuator.id!-1].urlImg!),
+                  backgroundImage:
+                      AssetImage(demoActuators[actuator.id! - 1].urlImg!),
                 ),
+              ),
+              AdvancedSwitch(
+                activeChild: const Text('ON', style: TextStyle(fontSize: 25)),
+                inactiveChild:
+                    const Text('OFF', style: TextStyle(fontSize: 25)),
+                borderRadius: BorderRadius.circular(10),
+                width: 115,
+                //115
+                height: 55,
+                // controller: demoActuators[actuator.id!-1].controller,
+                controller: actuator.controller,
               ),
             ],
           ),
@@ -165,19 +186,9 @@ class _ControlPanelState extends State<ControlPanel>
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const SizedBox(width: 5),
-              AdvancedSwitch(
-                activeChild: const Text('ON', style: TextStyle(fontSize: 25)),
-                inactiveChild: const Text('OFF', style: TextStyle(fontSize: 25)),
-                borderRadius: BorderRadius.circular(10),
-                width: 115,
-                height: 55,
-                // controller: demoActuators[actuator.id!-1].controller,
-                controller: actuator.controller,
-              ),
+              // const SizedBox(width: 5),
             ],
           ),
-        )
-    );
+        ));
   }
 }

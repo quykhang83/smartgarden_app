@@ -46,13 +46,14 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
   List<Observation>? obsHumidity = [];
   List<Observation>? obsLight = [];
   List<Observation>? obsCO2 = [];
+  List<Observation>? obsSoil = [];
   List<Sensor> sensors = demoSensors;
 
   late AnimationController progressController;
   List<Animation<double>> sensorAnimations = <Animation<double>>[];
 
-  List<double> valueObs = [0, 0, 0, 0];
-  List<double> oldValueObs = [0, 0, 0, 0];
+  List<double> valueObs = [0, 0, 0, 0, 0];
+  List<double> oldValueObs = [0, 0, 0, 0, 0];
   List<int> idDataStream = [];
   late Timer timer;
   // String token = '';
@@ -101,6 +102,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
         double value2 = localStorage.getDouble('2') ?? valueObs[1];
         double value3 = localStorage.getDouble('3') ?? valueObs[2];
         double value4 = localStorage.getDouble('4') ?? valueObs[3];
+        double value5 = localStorage.getDouble('5') ?? valueObs[4];
 
         progressController = AnimationController(
             vsync: this, duration: const Duration(milliseconds: 1000)); //5s
@@ -141,11 +143,21 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
             });
           });
 
+        Animation<double> sensorAnimation5 =
+        Tween<double>(begin: sensor.initVale, end: value5)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
+
+            });
+          });
+
 
         sensorAnimations.add(sensorAnimation1);
         sensorAnimations.add(sensorAnimation2);
         sensorAnimations.add(sensorAnimation3);
         sensorAnimations.add(sensorAnimation4);
+        sensorAnimations.add(sensorAnimation5);
 
         progressController.forward();
       }
@@ -158,6 +170,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
         double value2 = localStorage.getDouble('2') ?? valueObs[1];
         double value3 = localStorage.getDouble('3') ?? valueObs[2];
         double value4 = localStorage.getDouble('4') ?? valueObs[3];
+        double value5 = localStorage.getDouble('5') ?? valueObs[4];
 
         progressController = AnimationController(
             vsync: this, duration: const Duration(milliseconds: 1000)); //5s
@@ -198,11 +211,21 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
             });
           });
 
+        Animation<double> sensorAnimation5 =
+        Tween<double>(begin: oldValueObs[4], end: value5)
+            .animate(progressController)
+          ..addListener(() {
+            setState(() {
+
+            });
+          });
+
 
         sensorAnimations.add(sensorAnimation1);
         sensorAnimations.add(sensorAnimation2);
         sensorAnimations.add(sensorAnimation3);
         sensorAnimations.add(sensorAnimation4);
+        sensorAnimations.add(sensorAnimation5);
 
         progressController.forward();
       }

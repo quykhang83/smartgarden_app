@@ -5,7 +5,7 @@ class Sensor {
   final String name;
   final Color color;
   final double initVale;
-  final int maximumValue;
+  final double maximumValue;
   final String unit;
   final String urlImg;
   final String description;
@@ -66,5 +66,18 @@ List<Sensor> demoSensors = [
       urlImg: 'assets/images/humi-icon.png',
       description: "Lorem Ipsum is simply dummy text of the printing and "
           "typesetting industry. Lorem Ipsum has been the industry's "
-          "standard dummy text ever since the 1500s"),
+          "standard dummy text ever since the 1500s"
+  ),
+  Sensor(
+      id: "5",
+      name: "Soil",
+      color: Colors.blue,
+      initVale: 0,
+      maximumValue: 100,
+      unit: "%",
+      urlImg: 'assets/images/soil-sensor.png',
+      description: "Lorem Ipsum is simply dummy text of the printing and "
+          "typesetting industry. Lorem Ipsum has been the industry's "
+          "standard dummy text ever since the 1500s"
+  )
 ];

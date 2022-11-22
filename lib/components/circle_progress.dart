@@ -19,7 +19,7 @@ class CircleProgress extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    int maximumValue = sensor.maximumValue;
+    double maximumValue = sensor.maximumValue;
 
     Paint outerCircle = Paint()
       ..strokeWidth = 14

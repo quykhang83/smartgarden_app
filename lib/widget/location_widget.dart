@@ -33,10 +33,10 @@ class _ThingWidgetState extends State<ThingWidget> {
   List<int> dataSensor = [];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     getDataStreamOfThing().then((value) {
-      if(value!.isNotEmpty){
+      if (value!.isNotEmpty) {
         isHadData = true;
         dataSensor.clear();
         for (DataStream e in value) {
@@ -63,7 +63,10 @@ class _ThingWidgetState extends State<ThingWidget> {
             bottom: isExpanded ? 40 : 100,
             width: isExpanded ? size.width * 0.78 : size.width * 0.7,
             height: isExpanded ? size.height * 0.6 : size.height * 0.5,
-            child: ExpandedContentWidget(thing: widget.thing, listThing: widget.listThing, dataSensors: dataSensor),
+            child: ExpandedContentWidget(
+                thing: widget.thing,
+                listThing: widget.listThing,
+                dataSensors: dataSensor),
           ),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 250),
@@ -82,14 +85,14 @@ class _ThingWidgetState extends State<ThingWidget> {
   void openDetailPage() {
     if (!isExpanded) {
       /// Tap to expand card
-      setState((){
+      setState(() {
         isExpanded = true;
       });
       return;
     }
 
     print('in màn hình + ${widget.thing.id}');
-    if(isHadData){
+    if (isHadData) {
       Navigator.of(context).push(
         PageRouteBuilder(
           transitionDuration: const Duration(milliseconds: 500),
@@ -102,16 +105,18 @@ class _ThingWidgetState extends State<ThingWidget> {
 
             return FadeTransition(
               opacity: curvedAnimation,
-              child: DetailPage(thing: widget.thing, listThing: widget.listThing, animation: animation, dataSensors: dataSensor),
+              child: DetailPage(
+                  thing: widget.thing,
+                  listThing: widget.listThing,
+                  animation: animation,
+                  dataSensors: dataSensor),
             );
           },
         ),
       );
-    }
-    else {
+    } else {
       print("Some things was wrong!!");
     }
-
   }
 
   Future<List<DataStream>?> getDataStreamOfThing() async {
