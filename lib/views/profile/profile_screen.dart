@@ -241,12 +241,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: 40,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          shape: RoundedRectangleBorder(
+                          foregroundColor: kPrimaryColor, shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
-                            side: BorderSide(color: Colors.white),
+                            side: const BorderSide(color: Colors.white),
                           ),
-                          primary: kPrimaryColor,
-                          backgroundColor: Color(0xFFF5F6F9),
+                          backgroundColor: const Color(0xFFF5F6F9),
                         ),
                         onPressed: () {},
                         child: SvgPicture.asset("assets/icons/Camera Icon.svg",

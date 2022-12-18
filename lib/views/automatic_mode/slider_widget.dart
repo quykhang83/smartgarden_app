@@ -1,19 +1,31 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:smartgarden_app/models/sensor.dart';
 
+import '../../controllers/api/my_api.dart';
+import 'automode_panel.dart';
+
 class SliderWidget extends StatefulWidget {
   final Sensor sensor;
+  final int index;
+  final double initVal;
 
-  const SliderWidget({super.key, required this.sensor});
+  const SliderWidget({super.key, required this.sensor, required this.index, required this.initVal});
 
   @override
   _SliderWidgetState createState() => _SliderWidgetState();
 }
 
 class _SliderWidgetState extends State<SliderWidget> {
-  double value = 35;
+  double value = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    value = AutoModePanel.of(context)!.autoValues[widget.index];
+    print("Slider ${widget.index}: $value");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +51,7 @@ class _SliderWidgetState extends State<SliderWidget> {
         inactiveTickMarkColor: Colors.transparent,
       ),
       child: SizedBox(
-        width: 280,
+        width: 240,
         child: Row(
           children: [
             buildSideLabel(min),
@@ -48,17 +60,20 @@ class _SliderWidgetState extends State<SliderWidget> {
               child: Stack(
                 children: [
                   Slider(
-                    value: value,
+                    value: AutoModePanel.of(context)!.autoValues[widget.index],
                     min: min,
                     max: max,
-                    divisions: 20,
+                    divisions: 100,
                     label: value.round().toString(),
-                    onChanged: (value) => setState(() => this.value = value),
+                    onChanged: (value) {
+                      setState(() => this.value = value);
+                      AutoModePanel.of(context)?.autoValues[widget.index] = value;
+                    },
                   ),
                   Center(
                     child: Text(
-                      '${value.round()}',
-                      style: TextStyle(
+                      '${(value.round()==0) ? AutoModePanel.of(context)!.autoValues[widget.index].round() : value.round()}',
+                      style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,

@@ -24,7 +24,7 @@ class ImageWidget extends StatelessWidget {
       height: size.height * 0.5,
       width: size.width * 0.8,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           boxShadow: [
             BoxShadow(color: Colors.black26, blurRadius: 2, spreadRadius: 1),
           ],

@@ -22,19 +22,19 @@ class CircleProgress extends CustomPainter {
     double maximumValue = sensor.maximumValue;
 
     Paint outerCircle = Paint()
-      ..strokeWidth = 14
+      ..strokeWidth = 18
       ..color = Colors.grey
       ..style = PaintingStyle.stroke;
 
     Paint drawArc = Paint()
-      ..strokeWidth = 14
+      ..strokeWidth = 18
       ..color = sensor.color
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
 
     Offset center = Offset(size.width / 2, size.height / 2);
-    double radius = min(size.width / 2, size.height / 2) - 14;
+    double radius = min(size.width / 2, size.height / 2) - 6; //default - 14
     canvas.drawCircle(center, radius, outerCircle);
 
     double angle = 2 * pi * (value / maximumValue);

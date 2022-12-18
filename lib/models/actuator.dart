@@ -9,15 +9,14 @@ class Actuator {
   String? description;
   int? encodingType;
 
-  Actuator({
-    this.id,
-    this.name,
-    this.description,
-    this.encodingType,
-    this.controller,
-    this.controlState,
-    this.urlImg
-  });
+  Actuator(
+      {this.id,
+      this.name,
+      this.description,
+      this.encodingType,
+      this.controller,
+      this.controlState,
+      this.urlImg});
 
   Actuator.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -44,35 +43,49 @@ List<Actuator> demoActuators = [
       id: 1,
       name: "Light new",
       controller: ValueNotifier<bool>(false),
-      urlImg: 'assets/images/lightControl-icon2.png'),
+      urlImg: 'assets/images/lightControl-icon2.png',
+      description:
+          'For LED lighting, the design of a luminaire housing is subject to aesthetic, architectural and thermal management considerations!'),
   Actuator(
       id: 2,
       name: "Light",
       controller: ValueNotifier<bool>(false),
-      urlImg: 'assets/images/lightControl-icon2.png'),
+      urlImg: 'assets/images/lightControl-icon2.png',
+      description:
+          'For LED lighting, the design of a luminaire housing is subject to aesthetic, architectural and thermal management considerations!'),
   Actuator(
       id: 3,
       name: "Valve",
       controller: ValueNotifier<bool>(false),
-      urlImg: 'assets/images/pump-icon2.png'),
+      urlImg: 'assets/images/pump-icon2.png',
+      description:
+          'Maritime systems, seawater, ballast systems, engine rooms, lens systems,'),
   Actuator(
       id: 4,
       name: "Valve",
       controller: ValueNotifier<bool>(false),
-      urlImg: 'assets/images/pump-icon2.png'),
+      urlImg: 'assets/images/pump-icon2.png',
+      description:
+          'Maritime systems, seawater, ballast systems, engine rooms, lens systems,'),
   Actuator(
       id: 5,
       name: "Light",
       controller: ValueNotifier<bool>(false),
-      urlImg: 'assets/images/lightControl-icon2.png'),
+      urlImg: 'assets/images/lightControl-icon2.png',
+      description:
+          'For LED lighting, the design of a luminaire housing is subject to aesthetic, architectural and thermal management considerations!'),
   Actuator(
       id: 6,
       name: "Valve new",
       controller: ValueNotifier<bool>(false),
-      urlImg: 'assets/images/pump-icon2.png'),
+      urlImg: 'assets/images/pump-icon2.png',
+      description:
+          'Maritime systems, seawater, ballast systems, engine rooms, lens systems,'),
   Actuator(
       id: 7,
       name: "Valve",
       controller: ValueNotifier<bool>(false),
-      urlImg: 'assets/images/pump-icon2.png'),
+      urlImg: 'assets/images/pump-icon2.png',
+      description:
+          'Maritime systems, seawater, ballast systems, engine rooms, lens systems,'),
 ];

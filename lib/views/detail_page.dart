@@ -3,15 +3,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/data/hero_tag.dart';
 import 'package:smartgarden_app/data/locations.dart';
 import 'package:smartgarden_app/models/location.dart';
+import 'package:smartgarden_app/views/actuator_collection/actuator_list.dart';
 import 'package:smartgarden_app/views/control_panel.dart';
 import 'package:smartgarden_app/views/sensor_collection/sensor_list.dart';
 import 'package:smartgarden_app/views/singup_login/login_screen.dart';
 import 'package:smartgarden_app/widget/hero_widget.dart';
-import 'package:smartgarden_app/widget/lat_long_widget.dart';
 import 'package:smartgarden_app/widget/reviews_widget.dart';
 
+import '../components/background_image.dart';
 import '../models/thing.dart';
 import 'automatic_mode/automode_panel.dart';
+import 'garden_setting.dart';
 import 'gardens_list.dart';
 
 class DetailPage extends StatefulWidget {
@@ -44,18 +46,19 @@ class _DetailPageState extends State<DetailPage> {
   _getAutoState() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     // localStorage.setString('token', body['token']);
-    var autoVal = localStorage.getBool('autoState');
+    var autoVal = localStorage.getBool('autoState${widget.thing.id}');
     if (autoVal == null) {
-      localStorage.setBool('autoState', false);
+      localStorage.setBool('autoState${widget.thing.id}', false);
       autoVal = false;
     }
-    autoState = autoVal;
+    setState(() {
+      autoState = autoVal!;
+    });
     print(autoState);
   }
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
@@ -97,17 +100,22 @@ class _DetailPageState extends State<DetailPage> {
                 ),
                 const PopupMenuItem<int>(
                   value: 1,
-                  child: Text('Automatic mode',
+                  child: Text('Add actuators',
                       style: TextStyle(fontWeight: FontWeight.w700)),
                 ),
                 const PopupMenuItem<int>(
                   value: 2,
+                  child: Text('Automatic mode',
+                      style: TextStyle(fontWeight: FontWeight.w700)),
+                ),
+                const PopupMenuItem<int>(
+                  value: 3,
                   child: Text('Settings',
                       style: TextStyle(fontWeight: FontWeight.w700)),
                 ),
                 const PopupMenuDivider(),
                 PopupMenuItem<int>(
-                  value: 3,
+                  value: 4,
                   child: Row(
                     children: const [
                       Icon(Icons.logout),
@@ -168,12 +176,36 @@ class _DetailPageState extends State<DetailPage> {
                           dataSensors: widget.dataSensors),
                     )),
                 Expanded(
-                    flex: 1,
-                    child: Container(
-                      color: Colors.indigo,
-                      child: ControlPanel(
-                          thing: widget.thing, listThing: widget.listThing),
-                    )),
+                  flex: 1,
+                  child: autoState
+                      ? Stack(
+                          children: [
+                            const BackgroundImage(
+                              image: 'assets/images/control-panel-bg.jpg',
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(10.0),
+                              color: const Color(0x80111010),
+                              child: Column(
+                                children: const [
+                                  Text(
+                                      "You are in Auto mode, turn it off for Manual control",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                      textAlign: TextAlign.center),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      : Container(
+                          color: Colors.indigo,
+                          child: ControlPanel(
+                              thing: widget.thing, listThing: widget.listThing),
+                        ),
+                )
               ],
             ),
           ),
@@ -188,6 +220,11 @@ class _DetailPageState extends State<DetailPage> {
             MaterialPageRoute(builder: (BuildContext ctx) => SensorList()));
         break;
       case 1:
+        print("Tap to actuator list!");
+        Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext ctx) => ActuatorList()));
+        break;
+      case 2:
         print("Tap to automatic mode!");
         Navigator.push(
             context,
@@ -200,6 +237,16 @@ class _DetailPageState extends State<DetailPage> {
                     ))).then((value) => {if (value) _getAutoState()});
         break;
       case 3:
+        print("Tap to Setting!");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext ctx) => GardenSetting(
+                      thing: widget.thing,
+                      dataSensors: widget.dataSensors,
+                    )));
+        break;
+      case 4:
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginScreen()),
           (route) => false,

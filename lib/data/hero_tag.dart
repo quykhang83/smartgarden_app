@@ -2,12 +2,13 @@ import 'package:smartgarden_app/models/actuator.dart';
 import 'package:smartgarden_app/models/location.dart';
 
 import '../models/sensor.dart';
+import '../models/thing.dart';
 
 class HeroTag {
   static String image(String urlImage) => urlImage;
 
-  static String addressLine1(Location location) =>
-      location.name + location.addressLine1;
+  static String addressLine1(Thing thing) =>
+      thing.name!;
 
   static String addressLine2(Location location) =>
       location.name + location.addressLine2;

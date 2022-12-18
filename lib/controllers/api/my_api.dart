@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 class CallApi{
-  final String _url = 'http://52.221.200.220/api/';
+  final String _url = 'http://54.169.245.89/api/';
   // final String _imgUrl='http://54.169.139.189/uploads/';
   // getImage(){
   //   return _imgUrl;
@@ -19,10 +19,21 @@ class CallApi{
     );
   }
 
+  postNewEntity(data, apiUrl) async {
+    // var fullUrl = _url + apiUrl + await _getToken();
+    var fullUrl = _url + apiUrl;
+    print(fullUrl);
+    return await http.post(
+        Uri.parse(fullUrl),
+        body: jsonEncode(data),
+        headers: _setPostNewEntityHeaders()
+    );
+  }
+
   getData(apiUrl) async {
     // var fullUrl = _url + apiUrl + await getToken() ;
     var fullUrl = _url + apiUrl;
-    print(fullUrl);
+    // print(fullUrl);
 
     return await http.get(
         Uri.parse(fullUrl),
@@ -44,6 +55,13 @@ class CallApi{
     'Content-type' : 'application/json',
     'Accept' : 'application/json',
     'Charset': 'utf-8',
+  };
+
+  _setPostNewEntityHeaders() => {
+    'Content-type' : 'application/json',
+    'Accept' : 'application/json',
+    'Charset': 'utf-8',
+    'token': 'yRkl2JogHFzLen0daWZM248I2QL2Z89fNCZqNNNOrJVSFEwmR02cVnhGK4q0',
   };
 
   _setGetHeaders() => {

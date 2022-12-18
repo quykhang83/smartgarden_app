@@ -29,11 +29,13 @@ class ExpandedContentWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
-          children:  [
-            // HeroWidget(
-            //   tag: HeroTag.addressLine1(thing),
-            //   child: Text(thing),
-            // ),
+          children: [
+            HeroWidget(
+              tag: HeroTag.addressLine1(thing),
+              child: Text(thing.description!,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 17)),
+            ),
             SizedBox(height: 8),
             // buildAddressRating(thing: thing),
             SizedBox(height: 12),
@@ -77,7 +79,7 @@ class ExpandedContentWidget extends StatelessWidget {
               child: CircleAvatar(
                 radius: 20, //old param: 16
                 backgroundColor: Colors.black12,
-                backgroundImage: AssetImage(demoSensors[sensorId-1].urlImg),
+                backgroundImage: AssetImage(demoSensors[sensorId - 1].urlImg),
               ),
             ),
           );

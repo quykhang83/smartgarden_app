@@ -27,7 +27,7 @@ List<Sensor> demoSensors = [
       name: "Light",
       color: Colors.yellow,
       initVale: 0,
-      maximumValue: 1000,
+      maximumValue: 3000,
       unit: "lux",
       urlImg: 'assets/images/light-icon.png',
       description: "Lorem Ipsum is simply dummy text of the printing and "
@@ -38,7 +38,7 @@ List<Sensor> demoSensors = [
       name: "CO2",
       color: Colors.green,
       initVale: 0,
-      maximumValue: 100,
+      maximumValue: 10000,
       unit: "ppm",
       urlImg: 'assets/images/co2-icon.png',
       description: "Lorem Ipsum is simply dummy text of the printing and "
@@ -49,7 +49,7 @@ List<Sensor> demoSensors = [
       name: "Temperature",
       color: Colors.red,
       initVale: 0,
-      maximumValue: 50,
+      maximumValue: 100,
       unit: "°C",
       urlImg: 'assets/images/temp-icon.png',
       description: "Lorem Ipsum is simply dummy text of the printing and "

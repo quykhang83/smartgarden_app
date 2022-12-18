@@ -86,7 +86,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
 
   _DashboardInit() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
-    print('123 $idDataStream ${widget.dataSensors}');
+    // print('123 $idDataStream ${widget.dataSensors}');
     // sensorAnimations.clear();
     obsTemperature?.clear();
     obsHumidity?.clear();
@@ -380,13 +380,13 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
                         Text(
                           sensorAnimations.isNotEmpty ? '${sensorAnimations[int.parse(number)-1].value.toInt()}' : '',
                           style: const TextStyle(
-                              fontSize: 50,
+                              fontSize: 42,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           sensors[int.parse(number)-1].unit,
                           style: const TextStyle(
-                              fontSize: 20,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold),
                         ),
                       ],

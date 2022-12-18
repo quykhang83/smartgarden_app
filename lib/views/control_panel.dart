@@ -48,9 +48,10 @@ class _ControlPanelState extends State<ControlPanel>
         for (Actuator e in value!) {
           print(
               "${e.id}: ${e.name} - ${e.controlState} - ${e.controller?.value}");
-          e.controller = (e.controlState == 0)
-              ? ValueNotifier<bool>(false)
-              : ValueNotifier<bool>(true);
+          //Determine on/off after turn off AutoMode
+          e.controller = (e.controlState == -1)
+              ? ValueNotifier<bool>(true)
+              : ValueNotifier<bool>(false);
 
           actuators.add(e);
         }
@@ -128,7 +129,7 @@ class _ControlPanelState extends State<ControlPanel>
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 1,
               childAspectRatio: 0.34,
-              // mainAxisSpacing: 8, //comment it
+              mainAxisSpacing: 8, //comment it
               crossAxisSpacing: 8,
             ),
             scrollDirection: Axis.horizontal,
@@ -157,13 +158,13 @@ class _ControlPanelState extends State<ControlPanel>
         // color: Colors.orange,
         child: GridTile(
           header: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               HeroWidget(
                 tag: HeroTag.avatar2(demoActuators[actuator.id! - 1],
                     widget.listThing.indexOf(widget.thing)),
                 child: CircleAvatar(
-                  radius: 27, //27
+                  radius: 32, //27
                   backgroundColor: Colors.black12,
                   backgroundImage:
                       AssetImage(demoActuators[actuator.id! - 1].urlImg!),
@@ -174,7 +175,7 @@ class _ControlPanelState extends State<ControlPanel>
                 inactiveChild:
                     const Text('OFF', style: TextStyle(fontSize: 25)),
                 borderRadius: BorderRadius.circular(10),
-                width: 115,
+                width: 118,
                 //115
                 height: 55,
                 // controller: demoActuators[actuator.id!-1].controller,
