@@ -109,12 +109,6 @@ class _ControlPanelState extends State<ControlPanel>
     var res = await CallApi().postData(data, 'post/task');
     var body = json.decode(res.body);
     print(body);
-    // if (body['success']) {
-    //   var user = localStorage.getString('user');
-    //   print(user);
-    // } else {
-    //   print("Some things were wrong");
-    // }
   }
 
   @override
@@ -124,25 +118,40 @@ class _ControlPanelState extends State<ControlPanel>
         const BackgroundImage(
           image: 'assets/images/control-panel-bg.jpg',
         ),
-        if (actuators.isNotEmpty)
-          GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: 0.34,
-              mainAxisSpacing: 8, //comment it
-              crossAxisSpacing: 8,
-            ),
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.all(4),
-            controller: scrollController,
-            itemCount: actuators.length,
-            itemBuilder: (context, index) {
-              final actuator = actuators[index];
-              final item = actuators[index].id;
+        actuators.isNotEmpty
+            ? GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 0.34,
+                  mainAxisSpacing: 8, //comment it
+                  crossAxisSpacing: 8,
+                ),
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.all(4),
+                controller: scrollController,
+                itemCount: actuators.length,
+                itemBuilder: (context, index) {
+                  final actuator = actuators[index];
+                  final item = actuators[index].id;
 
-              return buildActuator(item.toString(), actuator);
-            },
-          )
+                  return buildActuator(item.toString(), actuator);
+                },
+              )
+            : Container(
+                padding: const EdgeInsets.all(10.0),
+                color: const Color(0x80111010),
+                child: Column(
+                  children: const [
+                    Text(
+                        "You don't have any actuator yet\nAdd actuator to control your garden",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                        textAlign: TextAlign.center),
+                  ],
+                ),
+              )
       ],
     );
   }
@@ -164,7 +173,7 @@ class _ControlPanelState extends State<ControlPanel>
                 tag: HeroTag.avatar2(demoActuators[actuator.id! - 1],
                     widget.listThing.indexOf(widget.thing)),
                 child: CircleAvatar(
-                  radius: 32, //27
+                  radius: 27, //27
                   backgroundColor: Colors.black12,
                   backgroundImage:
                       AssetImage(demoActuators[actuator.id! - 1].urlImg!),

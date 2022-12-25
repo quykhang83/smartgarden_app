@@ -201,11 +201,11 @@ class _GardensListState extends State<GardensList> {
                               fontWeight: FontWeight.w700)),
                       onPressed: () async {
                         var data = {
-                          'name': 'Temperature Monitoring System',
-                          'description': 'Sensor system monitoring area temperature',
+                          'name': _changeNameTextController.text,
+                          'description': _changeDescTextController.text,
                           'id_user': idUser,
                           'id_location': 1,
-                          'avt_image': File(selectedImagePath),
+                          // 'avt_image': File(selectedImagePath),
                           'token': token
                         };
 
@@ -217,10 +217,10 @@ class _GardensListState extends State<GardensList> {
                         // } else {
                         //   print("Something were wrong!");
                         // }
+                        Navigator.pop(context);
                         setState(() {
                           initState();
                         });
-                        Navigator.pop(context);
                       })
                 ],
               ),

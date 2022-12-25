@@ -3,12 +3,16 @@ import 'package:smartgarden_app/components/default_app_bar.dart';
 import 'package:smartgarden_app/models/sensor.dart';
 import 'package:smartgarden_app/views/sensor_collection/sensor_detail.dart';
 
+import '../../models/thing.dart';
+
 class SensorList extends StatelessWidget {
-  static String id = "/sensorList";
-  const SensorList({Key? key}) : super(key: key);
+  final Thing thing;
+  const SensorList({Key? key, required this.thing}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
         appBar: const DefaultAppBar(title: 'Sensor Collection'),
         body: ListView.builder(
@@ -25,7 +29,7 @@ class SensorList extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => SensorDetail(sensor)));
+                            builder: (context) => SensorDetail(sensor, thing: thing,)));
                   },
                 ),
               );

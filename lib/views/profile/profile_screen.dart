@@ -69,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       // extendBodyBehindAppBar: true,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       // extendBody: true,
       backgroundColor: Colors.orange.shade50,
       appBar: const CustomAppBar(title: 'My Profile'),
@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 115),
                 child: Container(
-                  height: 548,
+                  // height: 548,
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   decoration: const BoxDecoration(
@@ -102,110 +102,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       topRight: Radius.circular(30),
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            width: 250,
-                            height: 60,
-                            padding: EdgeInsets.only(left: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      displayName,
-                                      // userData.userName.toString(),
-                                      style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      userData['phone'],
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                                CircleAvatar(
-                                  radius: 23,
-                                  backgroundColor: Colors.green,
-                                  child: CircleAvatar(
-                                    radius: 19,
-                                    backgroundColor: Color(0xFFF5F6F9),
-                                    child: IconButton(
-                                      icon: Icon(Icons.edit),
-                                      color: Colors.green,
-                                      onPressed: () {
-                                        _showDialog();
-                                        setState(() {
-                                          displayName = userData['displayname'];
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      //---------------Menu Frame ---------------//
-                      SingleChildScrollView(
-                        // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Column(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            ProfileMenu(
-                              text: "My Account",
-                              icon: "assets/icons/User Icon.svg",
-                              press: () => {},
-                            ),
-                            ProfileMenu(
-                              text: "Notifications",
-                              icon: "assets/icons/Bell.svg",
-                              press: () {},
-                            ),
-                            ProfileMenu(
-                              text: "Settings",
-                              icon: "assets/icons/Settings.svg",
-                              press: () {},
-                            ),
-                            ProfileMenu(
-                              text: "Help Center",
-                              icon: "assets/icons/Question mark.svg",
-                              press: () {},
-                            ),
-                            ProfileMenu(
-                              text: "Log Out",
-                              icon: "assets/icons/Log out.svg",
-                              press: () async {
-                                // var res = await CallApi().deleteToken();
-                                // var body = json.decode(res.body);
-                                // print(body);
-                                // if (body['success']) {
-                                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                                  prefs.remove('token');
-                                  prefs.remove("user");
-                                  Navigator.pushReplacement(context,
-                                      MaterialPageRoute(builder: (BuildContext ctx) => LoginScreen()));
-                                // } else {
-                                //   _showMsg(body['message']);
-                                // }
-                              },
+                            Container(
+                              width: 250,
+                              height: 80,
+                              padding: EdgeInsets.only(left: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        displayName,
+                                        // userData.userName.toString(),
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        userData['phone'],
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                  CircleAvatar(
+                                    radius: 23,
+                                    backgroundColor: Colors.green,
+                                    child: CircleAvatar(
+                                      radius: 19,
+                                      backgroundColor: Color(0xFFF5F6F9),
+                                      child: IconButton(
+                                        icon: Icon(Icons.edit),
+                                        color: Colors.green,
+                                        onPressed: () {
+                                          _showDialog();
+                                          setState(() {
+                                            displayName = userData['displayname'];
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                        //---------------Menu Frame ---------------//
+                        SingleChildScrollView(
+                          // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: Column(
+                            children: [
+                              ProfileMenu(
+                                text: "My Account",
+                                icon: "assets/icons/User Icon.svg",
+                                press: () => {},
+                              ),
+                              ProfileMenu(
+                                text: "Notifications",
+                                icon: "assets/icons/Bell.svg",
+                                press: () {},
+                              ),
+                              ProfileMenu(
+                                text: "Settings",
+                                icon: "assets/icons/Settings.svg",
+                                press: () {},
+                              ),
+                              ProfileMenu(
+                                text: "Help Center",
+                                icon: "assets/icons/Question mark.svg",
+                                press: () {},
+                              ),
+                              ProfileMenu(
+                                text: "Log Out",
+                                icon: "assets/icons/Log out.svg",
+                                press: () async {
+                                  // var res = await CallApi().deleteToken();
+                                  // var body = json.decode(res.body);
+                                  // print(body);
+                                  // if (body['success']) {
+                                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                                    prefs.remove('token');
+                                    prefs.remove("user");
+                                    Navigator.pushReplacement(context,
+                                        MaterialPageRoute(builder: (BuildContext ctx) => LoginScreen()));
+                                  // } else {
+                                  //   _showMsg(body['message']);
+                                  // }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )

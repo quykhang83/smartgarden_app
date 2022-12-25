@@ -1,20 +1,29 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/models/sensor.dart';
+import 'package:smartgarden_app/widget/location_widget.dart';
 
 import '../../components/default_app_bar.dart';
 import '../../components/default_button.dart';
+import '../../controllers/api/my_api.dart';
+import '../../models/thing.dart';
 import '../../size_config.dart';
+import '../main_board.dart';
 
 class SensorDetail extends StatefulWidget {
+  final Thing thing;
   final Sensor sensor;
 
-  const SensorDetail(this.sensor, {super.key});
+  const SensorDetail(this.sensor, {super.key, required this.thing});
 
   @override
   State<SensorDetail> createState() => _SensorDetailState();
 }
 
 class _SensorDetailState extends State<SensorDetail> {
+  String token = '';
 
   _showMsg(msg) {
     //
@@ -30,6 +39,25 @@ class _SensorDetailState extends State<SensorDetail> {
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  _addSensor() async{
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    token = localStorage.getString('token')!;
+
+    var data = {
+      'Sensor': widget.sensor.id,
+      'Thing': widget.thing.id,
+      'name': '${widget.sensor.name} in ${widget.thing.name}',
+      'description': "New DataStream for recording ${widget.sensor.name}",
+      // 'avt_image': File(selectedImagePath),
+      'token': token
+    };
+
+    var res = await CallApi().postData(data, 'post/datastreams');
+    var body = json.decode(res.body);
+    print(body);
+    _showMsg("Added ${widget.sensor.name} sensor to ${widget.thing.name}");
   }
 
   @override
@@ -68,11 +96,19 @@ class _SensorDetailState extends State<SensorDetail> {
                 width: MediaQuery.of(context).size.width * 0.6,
                 child: DefaultButton(
                   text: "Add it sensor",
-                  press: () {
+                  press: () async {
                     // setState(() {});
                     // Navigator.pop(context);
-                    _showMsg("Added ${widget.sensor.name} sensor");
-                    Navigator.pop(context);
+                    // _showMsg("Added ${widget.sensor.name} sensor");
+                    await _addSensor();
+                    setState(() {
+                      // ThingWidget.of(context)?.initState();
+                      // Navigator.pop(context);
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => MainBoard()),
+                            (route) => false,
+                      );
+                    });
                   },
                 ),
               ),

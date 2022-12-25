@@ -18,5 +18,4 @@ final Map<String, WidgetBuilder> routes = {
   OtpScreen.id: (context) => OtpScreen(),
   LoginSuccessScreen.id: (context) => LoginSuccessScreen(),
   ProfileScreen.id: (context) => ProfileScreen(),
-  SensorList.id: (context) => SensorList(),
 };

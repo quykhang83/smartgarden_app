@@ -24,10 +24,14 @@ class ThingWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ThingWidgetState createState() => _ThingWidgetState();
+  ThingWidgetState createState() => ThingWidgetState();
+
+  // note: updated as context.ancestorStateOfType is now deprecated
+  static ThingWidgetState? of(BuildContext context) =>
+      context.findAncestorStateOfType<ThingWidgetState>();
 }
 
-class _ThingWidgetState extends State<ThingWidget> {
+class ThingWidgetState extends State<ThingWidget> {
   bool isExpanded = false;
   bool isHadData = false;
   List<int> dataSensor = [];
@@ -92,7 +96,7 @@ class _ThingWidgetState extends State<ThingWidget> {
     }
 
     print('in màn hình + ${widget.thing.id}');
-    if (isHadData) {
+    // if (isHadData) {
       Navigator.of(context).push(
         PageRouteBuilder(
           transitionDuration: const Duration(milliseconds: 500),
@@ -114,9 +118,9 @@ class _ThingWidgetState extends State<ThingWidget> {
           },
         ),
       );
-    } else {
-      print("Some things was wrong!!");
-    }
+    // } else {
+    //   print("Some things was wrong!!");
+    // }
   }
 
   Future<List<DataStream>?> getDataStreamOfThing() async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartgarden_app/views/gardens_list.dart';
+import 'package:smartgarden_app/views/main_board.dart';
 
 import '../views/singup_login/login_screen.dart';
 import 'menu_widget.dart';
@@ -73,7 +74,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
     switch (item) {
       case 0:
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => GardensList()),
+          MaterialPageRoute(builder: (context) => MainBoard()),
               (route) => false,
         );
         break;

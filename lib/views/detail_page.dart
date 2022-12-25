@@ -93,25 +93,49 @@ class _DetailPageState extends State<DetailPage> {
                   borderRadius: BorderRadius.circular(10)),
               onSelected: (item) => onSelected(context, item),
               itemBuilder: (context) => [
-                const PopupMenuItem<int>(
+                PopupMenuItem<int>(
                   value: 0,
-                  child: Text('Add sensors',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
+                  child: Row(
+                    children: const [
+                      Icon(Icons.edgesensor_high_rounded),
+                      SizedBox(width: 8),
+                      Text('Add sensors',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ],
+                  ),
                 ),
-                const PopupMenuItem<int>(
+                PopupMenuItem<int>(
                   value: 1,
-                  child: Text('Add actuators',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
+                  child: Row(
+                    children: const [
+                      Icon(Icons.control_camera_rounded),
+                      SizedBox(width: 8),
+                      Text('Add actuators',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ],
+                  ),
                 ),
-                const PopupMenuItem<int>(
+                PopupMenuItem<int>(
                   value: 2,
-                  child: Text('Automatic mode',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
+                  child: Row(
+                    children: const [
+                      Icon(Icons.auto_mode_rounded),
+                      SizedBox(width: 8),
+                      Text('Auto Mode',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ],
+                  ),
                 ),
-                const PopupMenuItem<int>(
+                PopupMenuItem<int>(
                   value: 3,
-                  child: Text('Settings',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
+                  child: Row(
+                    children: const [
+                      Icon(Icons.settings),
+                      SizedBox(width: 8),
+                      Text('Settings',
+                          style: TextStyle(fontWeight: FontWeight.w700)),
+                    ],
+                  ),
                 ),
                 const PopupMenuDivider(),
                 PopupMenuItem<int>(
@@ -216,13 +240,19 @@ class _DetailPageState extends State<DetailPage> {
     switch (item) {
       case 0:
         print("Tap to sensor list!");
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext ctx) => SensorList()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext ctx) =>
+                    SensorList(thing: widget.thing)));
         break;
       case 1:
         print("Tap to actuator list!");
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext ctx) => ActuatorList()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext ctx) =>
+                    ActuatorList(thing: widget.thing)));
         break;
       case 2:
         print("Tap to automatic mode!");

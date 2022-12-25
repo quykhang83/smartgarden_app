@@ -74,7 +74,7 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
 
     //--------------------Fetch data measure----------------------//
     _DashboardInit();
-    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) => _DashboardInit());
+    timer = Timer.periodic(const Duration(seconds: 4), (Timer t) => _DashboardInit());
     // double temp = -10.0;
 
     // temp = observations![0].result![0];
@@ -258,12 +258,18 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
         // _showMsg(body['message']);
         print("Some things was wrong!!");
       }
-      if (body.toString().isNotEmpty && localStorage.get('${widget.dataSensors[i]}')!=null) {
+      if (body.toString().isNotEmpty && localStorage.getDouble('${widget.dataSensors[i]}')!=null) {
         setState(() {
           isLoading = true;
         });
+      } else if(widget.dataSensors.isNotEmpty && body.toString().isEmpty){
+        setState(() {
+          isLoading = false;
+        });
       } else {
-        isLoading = false;
+        setState(() {
+          isLoading = true;
+        });
       }
     }
 
@@ -281,12 +287,54 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
       return null;
     }
   }
+
   @override
   void dispose() {
     timer.cancel();
     progressController.dispose();
     controller.dispose();
     super.dispose();
+  }
+
+  Offset _tapPosition = Offset.zero;
+  void _getTapPosition(TapDownDetails tapPosition) {
+    final RenderBox referenceBox = context.findRenderObject() as RenderBox;
+    setState(() {
+      _tapPosition = referenceBox.globalToLocal(tapPosition.globalPosition);
+      print(_tapPosition);
+    });
+  }
+
+  void _showContextMenu(BuildContext context) async {
+    final RenderObject? overlay =
+    Overlay.of(context)?.context.findRenderObject();
+
+    final result = await showMenu(
+        context: context,
+        position: RelativeRect.fromRect(
+            Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy+220, 10, 10),
+            Rect.fromLTWH(0, 0, overlay!.paintBounds.size.width,
+                overlay.paintBounds.size.height)),
+        items: [
+          const PopupMenuItem(
+            child: Text('Detail'),
+            value: "detail",
+          ),
+          const PopupMenuItem(
+            child: Text('Remove'),
+            value: "remove",
+          )
+        ]);
+    // perform action on selected menu item
+    switch (result) {
+      case 'detail':
+        print("detail");
+        break;
+      case 'remove':
+        print('remove');
+        //Call API remove Sensor
+        break;
+    }
   }
 
   // Future<double?> getValueSensorFromLocal(int idSensor) async{
@@ -332,75 +380,79 @@ class _ReviewsWidgetState extends State<ReviewsWidget>
     },
   );
 
-  Widget buildSensor(String number, Sensor sensor) => Container(
-    height: 500,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: Colors.amberAccent,
-    ),
-    padding: const EdgeInsets.all(16),
-    // color: Colors.orange,
-    child: GridTile(
-      header: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          HeroWidget(
-            tag: HeroTag.avatar(sensor, widget.listThing.indexOf(widget.thing)),
-            child: CircleAvatar(
-              radius: 16,
-              backgroundColor: Colors.black12,
-              backgroundImage: AssetImage(sensors[int.parse(number)-1].urlImg),
-            ),
-          ),
-          Text(
-            sensors[int.parse(number)-1].name,
-            textAlign: TextAlign.center,
-            style:
-            const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ],
+  Widget buildSensor(String number, Sensor sensor) => GestureDetector(
+    onTapDown: (position) => {_getTapPosition(position)},
+    onLongPress: () => {_showContextMenu(context)},
+    child: Container(
+      height: 500,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.amberAccent,
       ),
-      child: Center(
-          child: (isLoading)
-              ? Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              const SizedBox(height: 5),
-              CustomPaint(
-                foregroundPainter: CircleProgress(
-                    value: sensorAnimations.isNotEmpty ? sensorAnimations[int.parse(number)-1].value : 0,
-                    sensor: sensors[int.parse(number)-1]),
-                child: SizedBox(
-                  width: 150,
-                  height: 150,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          sensorAnimations.isNotEmpty ? '${sensorAnimations[int.parse(number)-1].value.toInt()}' : '',
-                          style: const TextStyle(
-                              fontSize: 42,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          sensors[int.parse(number)-1].unit,
-                          style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
+      padding: const EdgeInsets.all(16),
+      // color: Colors.orange,
+      child: GridTile(
+        header: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            HeroWidget(
+              tag: HeroTag.avatar(sensor, widget.listThing.indexOf(widget.thing)),
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: Colors.black12,
+                backgroundImage: AssetImage(sensors[int.parse(number)-1].urlImg),
+              ),
+            ),
+            Text(
+              sensors[int.parse(number)-1].name,
+              textAlign: TextAlign.center,
+              style:
+              const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        child: Center(
+            child: (isLoading)
+                ? Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                const SizedBox(height: 5),
+                CustomPaint(
+                  foregroundPainter: CircleProgress(
+                      value: sensorAnimations.isNotEmpty ? sensorAnimations[int.parse(number)-1].value : 0,
+                      sensor: sensors[int.parse(number)-1]),
+                  child: SizedBox(
+                    width: 150,
+                    height: 150,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            sensorAnimations.isNotEmpty ? '${sensorAnimations[int.parse(number)-1].value.toInt()}' : '',
+                            style: const TextStyle(
+                                fontSize: 42,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            sensors[int.parse(number)-1].unit,
+                            style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          )
-              : const Text(
-            'Loading...',
-            style:
-            TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          )),
+              ],
+            )
+                : const Text(
+              'Loading...',
+              style:
+              TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            )),
+      ),
     ),
   );
 }

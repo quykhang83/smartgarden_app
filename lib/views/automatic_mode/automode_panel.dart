@@ -60,13 +60,13 @@ class AutoModePanelState extends State<AutoModePanel> {
 
       _getAutoData();
     });
-
   }
 
   _getAutoData() async {
-    for(int i = 0; i < actuators.length; i++){
+    for (int i = 0; i < actuators.length; i++) {
       TaskStatus temp = TaskStatus();
-      var res = await CallApi().getData('IoTTask/task(${actuators[i].id},${widget.thing.id})');
+      var res = await CallApi()
+          .getData('IoTTask/task(${actuators[i].id},${widget.thing.id})');
       var body = json.decode(res.body);
       print(body);
 
@@ -78,8 +78,7 @@ class AutoModePanelState extends State<AutoModePanel> {
           autoValues[i] = temp.status!.toDouble();
           print("AutomodePanel $i: ${autoValues[i]}");
         });
-      }
-      else {
+      } else {
         print("Some things was wrong!!");
       }
     }
@@ -129,11 +128,31 @@ class AutoModePanelState extends State<AutoModePanel> {
   _saveActuatorState() {
     for (int i = 0; i < actuators.length; i++) {
       actuators[i].controlState = -1;
-      _postActuatorState(autoValues[i].round(), widget.thing.id!, actuators[i].id!);
+      _postActuatorState(
+          autoValues[i].round(), widget.thing.id!, actuators[i].id!);
 
       print("${actuators[i].name}: ${autoValues[i].round()}");
     }
     _showMsg("Updated automatic mode");
+    _saveAutoModeData();
+  }
+
+  _saveAutoModeData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    for (int i = 0; i < actuators.length; i++) {
+      localStorage.setDouble('autoValues$i', autoValues[i]);
+    }
+  }
+
+  Future<bool> _checkSaveAutoModeData() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    bool check = true;
+    for (int i = 0; i < actuators.length; i++) {
+      if (autoValues[i] != (localStorage.getDouble('autoValues$i') ?? 0)) {
+        check = false;
+      }
+    }
+    return check;
   }
 
   _showMsg(msg) {
@@ -236,8 +255,10 @@ class AutoModePanelState extends State<AutoModePanel> {
                                         ),
                                         subtitle: Row(
                                           children: [
-                                            SliderWidget(initVal: autoValues[index],
-                                                index: index, sensor: sensor)
+                                            SliderWidget(
+                                                initVal: autoValues[index],
+                                                index: index,
+                                                sensor: sensor)
                                           ],
                                         ),
                                         leading: Image.asset(sensor.urlImg),
@@ -252,14 +273,12 @@ class AutoModePanelState extends State<AutoModePanel> {
                         ? SizedBox(
                             width: MediaQuery.of(context).size.width * 0.4,
                             child: DefaultButton(
-                              text: "Save",
-                              press: () {
-                                print("${autoValues[0]} - ${autoValues[1]}");
-                                _saveActuatorState();
-                                setState(() {});
-                                // _showMsg("Updated automatic mode");
-                              },
-                            ),
+                                text: "Save",
+                                press: () {
+                                  print("${autoValues[0]} - ${autoValues[1]}");
+                                  _saveActuatorState();
+                                  setState(() {});
+                                }),
                           )
                         : Container(
                             padding: const EdgeInsets.all(10.0),
